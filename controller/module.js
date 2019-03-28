@@ -1,4 +1,5 @@
 const mod = require('../models').module
+const task = require('../models').task
 
 function getModules(req, res) {
   return mod
@@ -61,7 +62,7 @@ function deleteModule(req, res) {
     .then(modid => {
       if (!modid) {
         return res.status(400).send({
-          message: 'Module Not Found',
+          message: 'Module Not Found'
         });
       }
       return modid
@@ -73,9 +74,20 @@ function deleteModule(req, res) {
 }
 
 function getTasks(req, res) {
-  return 
-    mod
-      
+  return mod
+  .findAll({
+    where : {
+      id: req.params.id
+    },
+    attributes : ['tasksId'],
+  })
+  .then((mods) => {
+    // console.log(mods);
+    res.status(200).send(mods)
+  })
+  .catch((error) => {
+    res.status(400).send(error);
+  });      
 }
 
 function newTask(req, res) {
