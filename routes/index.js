@@ -39,4 +39,8 @@ router.post('/app/logs', Log.newLog);
 router.get('/app/logs/:id', Log.specificLog);
 router.delete('/app/logs/:id', Log.deleteLog);
 
+//traineeStatus
+router.get('/app/status', Status.getStatus);
+router.post('/app/status', Status.newStatus);
+
 module.exports = router;

@@ -28,7 +28,7 @@ function specificModule(req, res) {
   return mod
     .findByPk(req.params.id)
     .then((mod) => {
-      res.status(mod).send(mod)
+      res.status(200).send(mod)
     }) 
     .catch((error) => {
       res.status(400).send(error);
