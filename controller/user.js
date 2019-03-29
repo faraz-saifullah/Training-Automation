@@ -1,19 +1,11 @@
 const user = require('../models').user;
-<<<<<<< HEAD
-const log = require('../models').log;
-const mod = require('../models').module;
-const traineeStatus = require('../models').traineeStatus;
-const userValidate = require(`../validations/user`);
-const moduleValidate = require(`../validations/module`);
 const sequelize = require('sequelize');
-=======
 const mod = require('../models').module;
 const task = require('../models').task;
 const log = require('../models').log;
 const traineeStatus = require('../models').traineeStatus;
 const userValidate = require(`../validations/user`);
 const moduleValidate = require(`../validations/module`);
->>>>>>> 29c3145a47e32eb77b9c1c7682af9cc000204070
 
 function getUsers(req, res) {
   return user
