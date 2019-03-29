@@ -8,17 +8,20 @@ module.exports = (sequelize, DataTypes) => {
   module.associate = function(models) {
     module.belongsToMany(models.user, {
       through: 'userModule',
-      as: { singular: 'module', plural: 'modules' },
-      foreignKey: 'modulesId'
-    }),
-    module.belongsToMany(models.log, {
-      through: 'moduleLog',
-      as: { singular: 'log', plural: 'logs' },
+      as: { singular: 'user', plural: 'users' },
       foreignKey: 'moduleId'
     }),
     module.belongsToMany(models.task, {
       through: 'moduleTask',
-      as: { singular: 'module', plural: 'modules' },
+      as: { singular: 'task', plural: 'tasks' },
+      foreignKey: 'moduleId'
+    }),
+    module.hasMany(models.log, {
+      as: 'logs',
+      foreignKey: 'moduleId'
+    }),
+    module.hasMany(models.traineeStatus, {
+      as: 'traineeStatuses',
       foreignKey: 'moduleId'
     })
   };

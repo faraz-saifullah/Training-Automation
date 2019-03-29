@@ -4,6 +4,7 @@ var User = require('../controller/user')
 var Module = require('../controller/module')
 var Task = require('../controller/task')
 var Log = require('../controller/log')
+var Status = require('../controller/status')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -20,6 +21,7 @@ router.put('/app/users/:id/updateTrainer', User.updateTrainer);
 //modules
 router.get('/app/modules', Module.getModules);
 router.post('/app/modules', Module.newModule);
+// router.post('/app/modules/addTask', Module.addTask);
 router.get('/app/modules/:id', Module.specificModule);
 router.put('/app/modules/:id', Module.updateModule);
 router.delete('/app/modules/:id', Module.deleteModule);
@@ -42,5 +44,8 @@ router.delete('/app/logs/:id', Log.deleteLog);
 //traineeStatus
 router.get('/app/status', Status.getStatus);
 router.post('/app/status', Status.newStatus);
+
+//advanced routers
+// router.get('/app/users/:id1/tasks/:id2', Task.durationDetails);
 
 module.exports = router;

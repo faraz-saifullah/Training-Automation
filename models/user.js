@@ -10,17 +10,17 @@ module.exports = (sequelize, DataTypes) => {
     trainingDuration: DataTypes.INTEGER
   }, {});
   user.associate = function(models) {
-      // user.hasOne(models.module, {
-      //   as: 'modules',
-      //   foreignKey: 'moduleId'
-      // }),
-      // user.hasOne(models.task, {
-      //   as: 'tasks',
-      //   foreignKey: 'taskId'
-      // });
-      user.belongsToMany(models.log, {
-        through: 'userLog',
-        as: { singular: 'user', plural: 'users' },
+      user.belongsToMany(models.module, {
+        through: 'userModule',
+        as: 'modules',
+        foreignKey: 'userId'
+      }),
+      user.hasMany(models.log, {
+        as: 'logs',
+        foreignKey: 'userId'
+      }),
+      user.hasMany(models.traineeStatus, {
+        as: 'traineeStatuses',
         foreignKey: 'userId'
       });
   };

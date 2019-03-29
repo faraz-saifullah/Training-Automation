@@ -1,6 +1,7 @@
-const status = require('../models').traineestatus
+const status = require('../models').traineeStatus
 
 function getStatus(req, res) {
+  //console.log(status);
   return status
     .findAll()
     .then((status) => {
@@ -12,14 +13,15 @@ function getStatus(req, res) {
 }
 
 function newStatus(req, res) {
-  task
+  status
     .build({
       userId: req.body.userId,
-      description: req.body.description,
-      duration: req.body.duration
+      moduleId: req.body.moduleId,
+      taskId: req.body.taskId,
+      status: req.body.status 
     })
     .save()
-    .then((newTask) => res.status(201).send(newTask))
+    .then((newStatus) => res.status(201).send(newStatus))
     .catch((error) => res.status(400).send(error));
 }
 

@@ -6,18 +6,18 @@ module.exports = (sequelize, DataTypes) => {
     time: DataTypes.DATE
   }, {});
   log.associate = function(models) {
-    // log.hasOne(models.user, {
-    //   as: 'user',
-    //   foreignKey: 'userId'
-    // }),
-    // log.hasOne(models.task, {
-    //   as: 'task',
-    //   foreignKey: 'taskId'
-    // }),
-    // log.hasOne(models.module, {
-    //   as: 'module',
-    //   foreignKey: 'moduleId'
-    // })
+    log.belongsTo(models.user, {
+      as: 'user',
+      foreignKey: 'userId'
+    }),
+    log.belongsTo(models.task, {
+      as: 'task',
+      foreignKey: 'taskId'
+    }),
+    log.belongsTo(models.module, {
+      as: 'module',
+      foreignKey: 'moduleId'
+    })
   };
   return log;
 };

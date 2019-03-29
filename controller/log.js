@@ -16,7 +16,10 @@ function newLog(req, res) {
     .build({
       entity: req.body.entity,
       status: req.body.status,
-      time: req.body.time
+      time: req.body.time,
+      userId: req.body.userId,
+      moduleId: req.body.moduleId,
+      taskId: req.body.taskId
     })
     .save()
     .then((newLog) => res.status(201).send(newLog))

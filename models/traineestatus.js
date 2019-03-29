@@ -6,8 +6,19 @@ module.exports = (sequelize, DataTypes) => {
     taskId: DataTypes.INTEGER,
     status: DataTypes.STRING
   }, {});
-  traineeStatus.associate = function(models) {
-    // associations can be defined here
+  traineeStatus.associate = function (models) {
+    traineeStatus.belongsTo(models.user, {
+      as: 'user',
+      foreignKey: 'userId'
+    }),
+    traineeStatus.belongsTo(models.task, {
+      as: 'task',
+      foreignKey: 'taskId'
+    }),
+    traineeStatus.belongsTo(models.module, {
+      as: 'module',
+      foreignKey: 'moduleId'
+    })
   };
   return traineeStatus;
 };

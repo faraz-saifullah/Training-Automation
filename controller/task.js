@@ -1,4 +1,5 @@
 const task = require('../models').task
+const log = require('../models').log
 
 function getTasks(req, res) {
   return task
@@ -73,10 +74,23 @@ function deleteTask(req, res) {
     .catch((error) => res.status(400).send(error));
 }
 
+// function durationDetails(req, res) {
+//     task
+//     .findByPk(req.params.id1)
+//     .then(task => {
+//       console.log(task.dataValues.duration)
+//       log
+//       .findAll({
+//         attributes: 
+//       })
+//     })
+// }
+
 module.exports = {
   getTasks,
   newTask,
   specificTask,
   updateTask,
   deleteTask
+  // durationDetails
 }
