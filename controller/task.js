@@ -3,7 +3,9 @@ const log = require('../models').log
 
 function getTasks(req, res) {
   return task
-  .findAll()
+  .findAll({
+    attributes : ['id', 'name', 'description', 'duration']
+  })
   .then((tasks) => {
     res.status(200).send(tasks)
   })

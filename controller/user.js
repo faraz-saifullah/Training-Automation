@@ -2,7 +2,9 @@ const user = require('../models').user
 
 function getUsers(req, res) {
   return user
-    .findAll()
+    .findAll({
+      attributes : ['id', 'name', 'email', 'password', 'type', 'trainerId', 'joinDate', 'trainingDuration']
+    })
     .then((users) => {
       res.status(200).send(users)
     })

@@ -3,7 +3,9 @@ const task = require('../models').task
 
 function getModules(req, res) {
   return mod
-
+    .findAll({
+      attributes : ['id', 'name', 'duration', 'tasksId']
+    })
     .then((mods) => {
       res.status(200).send(mods)
     })
