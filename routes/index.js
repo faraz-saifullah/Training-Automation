@@ -25,7 +25,7 @@ router.post('/app/modules', Module.newModule);
 router.get('/app/modules/:id', Module.specificModule);
 router.put('/app/modules/:id', Module.updateModule);
 router.delete('/app/modules/:id', Module.deleteModule);
-router.get('/app/modules/:id/tasks', Module.getTasks);
+router.get('/app/modules/:id/tasks', Module.getAllTasks);
 router.post('/app/modules/:id/tasks', Module.newTask);
 
 //tasks
