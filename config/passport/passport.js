@@ -45,9 +45,10 @@ module.exports = (passport, user) => {
                         var userPassword = generateHash(password);
                         var data = {
                             email: email,
-                            password: password,
+                            password: userPassword,
                             name: req.body.name,
                             type: req.body.type,
+                            joinDate: req.body.joiningDate,
                         };
 
                         User.create(data).then((newUser, created) => {
@@ -88,7 +89,7 @@ module.exports = (passport, user) => {
                     .then(user => {
                         if (!user) {
                             return done(null, false, {
-                                message: 'Email does not exist'
+                                message: 'Email does not exist' 
                             });
                         }
 
@@ -99,7 +100,8 @@ module.exports = (passport, user) => {
                         }
 
                         var userinfo = user.get();
-
+                        console.log(user.id);
+                        req.session.userId = user.id;
                         return done(null, userinfo);
                     })
                     .catch(err => {

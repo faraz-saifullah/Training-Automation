@@ -35,11 +35,35 @@ function newUser(req, res) {
         type: req.body.type
       })
       .save()
-      .then((newUser) => res.status(201).send(newUser))
+      .then((newUser) => {
+        //res.status(201).send(newUser);
+        req.session.userId = user.id;
+        req.session.type = user.type;
+        res.render('home')
+      })
       .catch((error) => res.status(400).send(error));
     }
   })
   .catch((error) => res.status(400).send(error));
+}
+
+function login(req, res) {
+  user.findOne({
+      where: {
+        email: req.body.email,
+        password: req.body.password
+      }
+    })
+    .then(user => {
+      if(!user) {
+        res.status(400).send('Invalid Credentials')
+      } else {
+      req.session.type = user.type;
+      req.session.userId = user.id;
+      console.log(req.session); 
+      res.redirect('home'); 
+      }
+    })   
 }
 
 function specificUser(req, res) {
@@ -133,11 +157,25 @@ function deleteUser(req, res) {
     .catch((error) => res.status(400).send(error));
 }
 
+async function getRole(email) {
+  let role = await user.findOne({
+    raw: true,
+    where: {
+      email: email
+    },
+    attributes: ['type']
+  })
+  console.log(role);
+  return role;
+}
+
 module.exports = {
   getUsers,
   newUser,
   specificUser,
   updateUser,
   updateTrainer,
-  deleteUser
+  deleteUser,
+  getRole,
+  login
 };

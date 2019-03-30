@@ -1,23 +1,51 @@
 var createError = require('http-errors');
 var express = require('express');
+var router = express.Router();
 const passport = require('passport');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const exphbs = require('express-handlebars');
-
-var indexRouter = require('./routes/index');
+var session = require('express-session');
+var Sequelize = require('sequelize')
+var SequelizeStore = require('connect-session-sequelize')(session.Store);
+var db = require('./models'),db;
+var models = require('./models');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
-app.use(require('express-session')({
+var sequelize = db.sequelize;
+
+const {
+  PORT = 3000,
+  NODE_ENV = 'development',
+  SESS_NAME = 'sid',
+  
+} = process.env
+
+app.use(session({
+  name: SESS_NAME,
   secret: 'keyboard cat',
-  resave: true,
-  saveUninitialized: true
+  resave: false,
+  saveUninitialized: false, 
+  cookie: {
+    maxAge: 1000000, 
+    sameSite: true,
+  },
+  store: new SequelizeStore({
+    db: sequelize
+  }),
+  proxy: true
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(function(req, res, next) {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  next();
+})
 
 // view engine setup
 const viewsPath = path.join(__dirname, 'views');
@@ -41,27 +69,24 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+// app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
-const authRoute = require('./controller/auth.js')(app, passport);
-const models = require('./models');
-// Load passport strategies
+var indexRouter = require('./routes/index')(app, passport);
 require('./config/passport/passport.js')(passport, models.user);
 
-// Sync Database
-models.sequelize
-  .sync()
-  .then(function() {
-    console.log('Database Connected');
-});
+//Sync Database
+// models.sequelize
+//   .sync()
+//   .then(function() {
+//     console.log('Database Connected');
+// });
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
 //   next(createError(404));
 // });
 
-// // error handler
+// error handler
 // app.use(function(err, req, res, next) {
 //   // set locals, only providing error in development
 //   res.locals.message = err.message;
