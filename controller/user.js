@@ -1,4 +1,8 @@
 const user = require('../models').user;
+const mod = require('../models').module;
+const task = require('../models').task;
+const log = require('../models').log;
+const traineeStatus = require('../models').traineeStatus;
 const userValidate = require(`../validations/user`);
 
 function getUsers(req, res) {
@@ -133,11 +137,16 @@ function deleteUser(req, res) {
     .catch((error) => res.status(400).send(error));
 }
 
+function assignModule(req, res) {
+
+}
+
 module.exports = {
   getUsers,
   newUser,
   specificUser,
   updateUser,
   updateTrainer,
-  deleteUser
+  deleteUser,
+  assignModule
 };
