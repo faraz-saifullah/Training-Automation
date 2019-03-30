@@ -1,5 +1,5 @@
 const task = require('../models').task
-const log = require('../models').log
+const taskValidation = require('../validations/tasks');
 
 function getTasks(req, res) {
   return task
@@ -18,7 +18,11 @@ function specificTask(req, res) {
   return task
     .findByPk(req.params.id)
     .then((task) => {
-      res.status(200).send(task)
+      if(task) {
+        res.status(200).send(task)
+      } else {
+        res.status(404).send("Task Does Not Exist")
+      }
     })
     .catch((error) => {
       res.status(400).send(error);
@@ -26,37 +30,46 @@ function specificTask(req, res) {
 }
 
 function newTask(req, res) {
-  //console.log(req.body.name);
-  task
-    .build({
-      name: req.body.name,
-      description: req.body.description,
-      duration: req.body.duration
-    })
-    .save()
-    .then((newTask) => res.status(201).send(newTask))
-    .catch((error) => res.status(400).send(error));
+  taskValidation.nonDuplicateTask(req.params.id, req.body.name).then((status) => {
+    if(status == "200") {
+      task
+      .build({
+        name: req.body.name,
+        description: req.body.description,
+        duration: req.body.duration
+      })
+      .save()
+      .then((newTask) => res.status(201).send(newTask))
+      .catch((error) => res.status(400).send(error));
+    } else {
+      res.status(409).send(`Task Already Exists`);
+    }
+  })
 }
 
 function updateTask(req, res) {
-  return task
-    .findByPk(req.params.id)
-    .then((taskid) => {
-      return taskid
-        .update({
-          name: req.body.name || taskid.name,
-          description: req.body.description || taskid.description,
-          duration: req.body.duration || taskid.duration
-        })
-        .then(() => {
-          res.status(200).send(taskid)
-        })
-        .catch((error) => {
-          res.status(400).send(error);
-        });
-    })
-
-
+  taskValidation.nonDuplicateTask(req.params.id, req.body.name).then((status) => {
+    if(status == "200") {
+      return task
+      .findByPk(req.params.id)
+      .then((taskid) => {
+        return taskid
+          .update({
+            name: req.body.name || taskid.name,
+            description: req.body.description || taskid.description,
+            duration: req.body.duration || taskid.duration
+          })
+          .then(() => {
+            res.status(200).send(taskid)
+          })
+          .catch((error) => {
+            res.status(400).send(error);
+          });
+      })
+    } else {
+      res.status(409).send(`Task Already Exists`);
+    }
+  })
 }
 
 function deleteTask(req, res) {
@@ -65,7 +78,7 @@ function deleteTask(req, res) {
     .then(taskid => {
       if (!taskid) {
         return res.status(400).send({
-          message: 'Task Not Found',
+          message: 'Task Does Not Exist',
         });
       }
       return taskid
@@ -76,23 +89,10 @@ function deleteTask(req, res) {
     .catch((error) => res.status(400).send(error));
 }
 
-// function durationDetails(req, res) {
-//     task
-//     .findByPk(req.params.id1)
-//     .then(task => {
-//       console.log(task.dataValues.duration)
-//       log
-//       .findAll({
-//         attributes: 
-//       })
-//     })
-// }
-
 module.exports = {
   getTasks,
   newTask,
   specificTask,
   updateTask,
   deleteTask
-  // durationDetails
 }

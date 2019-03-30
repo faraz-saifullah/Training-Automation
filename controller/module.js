@@ -1,5 +1,7 @@
-const mod = require('../models').module
-const task = require('../models').task
+const mod = require('../models').module;
+const task = require('../models').task;
+const taskValidation = require('../validations/tasks');
+const moduleValidation = require('../validations/module');
 
 function getModules(req, res) {
   return mod
@@ -15,52 +17,66 @@ function getModules(req, res) {
 }
 
 function newModule(req, res) {
-  mod
-  .build({
-    name : req.body.name,
-    duration: req.body.duration,
-    tasksId: req.body.tasksId
+  taskValidation.taskExists(req.body.tasksId).then((tasks) =>{
+    if(tasks != "404") {
+      mod
+      .build({
+        name : req.body.name,
+        duration: req.body.duration,
+        tasksId: [...new Set(req.body.tasksId)]
+      })
+      .save()
+      .then((newMod) => res.status(201).send(newMod))
+      .catch((error) => res.status(400).send(error));
+    } else {
+      res.status(404).send("Some Tasks Does Not Eist");
+    }
   })
-  .save()
-  .then((newMod) => res.status(201).send(newMod))
-  .catch((error) => res.status(400).send(error));
 
 }
 
 function specificModule(req, res) {
-  return mod
-    .findAll({
-      raw : true,
-       where : {
-      id : req.params.id
-    },
-      attributes : ['id', 'name', 'duration', 'tasksId']
-    })
-    .then((mod) => {
-      res.status(200).send(mod)
-    }) 
-    .catch((error) => {
-      res.status(400).send(error);
-    });
+  moduleValidation.moduleExists(req.params.id).then((modules) => {
+    if(modules != "404") {
+      res.status(200).send(modules);
+    } else {
+      res.status(404).send("Module Does Not Exist");
+    }
+  })
+  .catch((error) => {
+    res.status(400).send(error);
+  });
 }
 
 function updateModule(req, res) {
-  return mod
-    .findByPk(req.params.id)
-    .then((modid) => {
-      return modid
-        .update({
-          name: req.body.name || modid.name,
-          duration: req.body.duration || modid.duration,
-          tasksId: req.body.tasksId || modid.tasksId
-        })
-        .then(() => {
-          res.status(200).send(modid)
-        })
-        .catch((error) => {
-          res.status(400).send(modid);
-        });
-    })
+  let arr = [];
+  typeof req.body.tasksId == 'object' ? arr = req.body.tasksId : arr.push(req.body.tasksId);
+  taskValidation.taskExists(req.body.tasksId).then((tasks) =>{
+    if(tasks != "404") {
+      return mod
+      .findByPk(req.params.id)
+      .then((modid) => {
+        if(modid) {
+          modid
+          .update({
+            name: req.body.name || modid.name,
+            duration: req.body.duration || modid.duration,
+            tasksId: arr || modid.tasksId
+          })
+          .then(() => {
+            res.status(200).send(modid)
+          })
+          .catch((error) => {
+            res.status(400).send(error);
+          });
+        } else {
+          res.status(404).send("Module Does Not Exist");
+        }
+      })
+    } else {
+      res.status(404).send("Some Tasks Does Not Eist");
+    }
+  })
 }
 
 function deleteModule(req, res) {
@@ -68,9 +84,7 @@ function deleteModule(req, res) {
     .findByPk(req.params.id)
     .then(modid => {
       if (!modid) {
-        return res.status(400).send({
-          message: 'Module Not Found'
-        });
+        return res.status(400).send('Module Does Not Exist');
       }
       return modid
         .destroy()
@@ -90,8 +104,12 @@ function getAllTasks(req, res) {
     attributes : ['tasksId'],
   })
   .then((mods) => {
-    for(let i = 0; i < mods[0].tasksId.length; i++) {
-    getTask(mods[0].tasksId[i], res, i, mods[0].tasksId.length); 
+    if(mods.length > 0) {
+      for(let i = 0; i < mods[0].tasksId.length; i++) {
+        getTask(mods[0].tasksId[i], res, i, mods[0].tasksId.length); 
+        }
+    } else {
+      res.status(404).send(`Module Dose Not Exist`);
     }
   })
   .catch((error) => {
@@ -125,7 +143,7 @@ function createNewTask(req, res, arr) {
   .then((modid) => {
     return modid
       .update({
-        tasksId: arr || modid.tasksId
+        tasksId: [...new Set(arr)] || modid.tasksId
       })
       .then(() => {
         res.status(200).send(modid)
@@ -147,16 +165,21 @@ function newTask(req, res) {
     attributes : ['tasksId'],
   })
   .then((mods) => {
-    let arr = mods[0].tasksId;
-    console.log(typeof(req.body.tasksId));
-    if(typeof(req.body.tasksId) == "object") {
-      for(let i = 0; i < req.body.tasksId.length; i++) {
-        arr.push(Number(req.body.tasksId[i]));
+    taskValidation.taskExists(req.body.tasksId).then((tasks) =>{
+      if(tasks != `404`) {
+        let arr = mods[0].tasksId;
+        if(typeof(req.body.tasksId) == "object") {
+          for(let i = 0; i < req.body.tasksId.length; i++) {
+            arr.push(Number(req.body.tasksId[i]));
+          }
+        } else {
+          arr.push(Number(req.body.tasksId));
+        }
+        createNewTask(req, res, arr);
+      } else {
+        res.status(404).send(`Some Tasks Does Not Exist`);
       }
-    } else {
-      arr.push(Number(req.body.tasksId));
-    }
-    createNewTask(req, res, arr);
+    })
   })
   .catch((error) => {
     res.status(400).send(error);

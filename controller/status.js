@@ -1,7 +1,6 @@
 const status = require('../models').traineeStatus
 
 function getStatus(req, res) {
-  //console.log(status);
   return status
     .findAll()
     .then((status) => {

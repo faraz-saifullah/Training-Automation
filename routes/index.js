@@ -16,12 +16,12 @@ router.get('/app/users', User.getUsers);
 router.post('/app/users', User.newUser);
 router.get('/app/users/:id', User.specificUser);
 router.put('/app/users/:id', User.updateUser);
+router.delete('/app/users/:id', User.deleteUser);
 router.put('/app/users/:id/updateTrainer', User.updateTrainer);
 
 //modules
 router.get('/app/modules', Module.getModules);
 router.post('/app/modules', Module.newModule);
-// router.post('/app/modules/addTask', Module.addTask);
 router.get('/app/modules/:id', Module.specificModule);
 router.put('/app/modules/:id', Module.updateModule);
 router.delete('/app/modules/:id', Module.deleteModule);
