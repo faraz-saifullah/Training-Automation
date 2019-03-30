@@ -1,41 +1,10 @@
 var express = require('express');
-var router = express.Router();
 var User = require('../controller/user')
 var Module = require('../controller/module')
 var Task = require('../controller/task')
 var Log = require('../controller/log')
 var Status = require('../controller/status')
 
-const redirectLogin = (req, res, next) => {
-  if (!req.session.userId) {
-    res.redirect('/signin');
-  } else {
-    next();
-  }
-}
-
-const trainerRole = (req, res, next) => {
-  console.log(req.session);
-  if(req.session.type == "trainer" && req.session.userId) {
-    next();
-  } else {
-    res.status(401).send('Unauthorized access!');
-  }
-}
-
-const redirectHome = (req, res, next) => {
-  if (req.session.userId) {
-    res.redirect('/home');
-  } else {
-    next();
-  }
-}
-
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  console.log(req.session);
-  res.send("Hello");
-});
 
 //users
 router.get('/app/users', trainerRole, function (req, res) {
@@ -101,4 +70,3 @@ router.post('/signin', redirectHome, function (req, res) {
 });
 
 module.exports = router;
-

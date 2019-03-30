@@ -47,6 +47,7 @@ app.use(function(req, res, next) {
   res.locals.isAuthenticated = req.isAuthenticated();
   next();
 })
+
 // view engine setup
 const viewsPath = path.join(__dirname, 'views');
 const layoutsPath = path.join(viewsPath, 'layouts');
@@ -69,19 +70,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+// app.use('/', indexRouter);
 app.use('/users', usersRouter);
-const authRoute = require('./controller/auth.js')(app, passport);
-const models = require('./models');
-// Load passport strategies
-require('./config/passport/passport.js')(passport, models.user);
-
-// Sync Database
-models.sequelize
-  .sync()
-  .then(function() {
-    console.log('Database Connected');
-});
 
 
 module.exports = app;

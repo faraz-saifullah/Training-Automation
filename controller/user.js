@@ -42,7 +42,6 @@ function newUser(req, res) {
       })
       .save()
       .then((newUser) => {
-        //res.status(201).send(newUser);
         req.session.userId = user.id;
         req.session.type = user.type;
         res.render('home')
@@ -51,6 +50,25 @@ function newUser(req, res) {
     }
   })
   .catch((error) => res.status(400).send(error));
+}
+
+function login(req, res) {
+  user.findOne({
+      where: {
+        email: req.body.email,
+        password: req.body.password
+      }
+    })
+    .then(user => {
+      if(!user) {
+        res.status(400).send('Invalid Credentials')
+      } else {
+      req.session.type = user.type;
+      req.session.userId = user.id;
+      console.log(req.session); 
+      res.redirect('home'); 
+      }
+    })   
 }
 
 function login(req, res) {
@@ -135,7 +153,7 @@ function updateTrainer(req, res) {s
         .update({
           trainerId: req.body.trainerId || userid.trainerId
         })
-        .then(() => { 
+        .then(() => {
           res.status(200).send(userid)
         })
         .catch((error) => {
