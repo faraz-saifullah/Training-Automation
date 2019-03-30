@@ -7,7 +7,10 @@
   },
   "dependencies": {
     "bcrypt": "^3.0.5",
+<<<<<<< 14f52266fab466448d022d17f2296a45e572c89e
 <<<<<<< bfbb9f6a728e7e8bd7e6118e9a9ec86c6605ade6
+=======
+>>>>>>> added passport authenticaion
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.5.3",
     "connect-flash": "^0.1.1",
@@ -19,7 +22,10 @@
     "debug": "~2.6.9",
     "email-templates": "^2.7.1",
     "express": "~4.16.0",
+<<<<<<< 14f52266fab466448d022d17f2296a45e572c89e
 <<<<<<< bfbb9f6a728e7e8bd7e6118e9a9ec86c6605ade6
+=======
+>>>>>>> added passport authenticaion
     "express-handlebars": "^3.0.2",
     "express-session": "^1.15.6",
     "flash": "^1.1.0",
