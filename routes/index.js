@@ -1,51 +1,103 @@
 var express = require('express');
-var router = express.Router();
 var User = require('../controller/user')
 var Module = require('../controller/module')
 var Task = require('../controller/task')
 var Log = require('../controller/log')
 var Status = require('../controller/status')
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.send("Hello");
-});
+module.exports = (app, passport) => {
 
-//users
-router.get('/app/users', User.getUsers);
-router.post('/app/users', User.newUser);
-router.get('/app/users/:id', User.specificUser);
-router.put('/app/users/:id', User.updateUser);
-router.put('/app/users/:id/updateTrainer', User.updateTrainer);
+  const redirectLogin = (req, res, next) => {
+    if (!req.session.userId) {
+      res.redirect('/signin');
+    } else {
+      next();
+    }
+  }
 
-//modules
-router.get('/app/modules', Module.getModules);
-router.post('/app/modules', Module.newModule);
-// router.post('/app/modules/addTask', Module.addTask);
-router.get('/app/modules/:id', Module.specificModule);
-router.put('/app/modules/:id', Module.updateModule);
-router.delete('/app/modules/:id', Module.deleteModule);
-router.get('/app/modules/:id/tasks', Module.getTasks);
-router.post('/app/modules/:id/tasks', Module.newTask);
+  const trainerRole = (req, res, next) => {
+    console.log(req.session);
+    if(req.session.type == "trainer" && req.session.userId) {
+      next();
+    } else {
+      res.status(401).send('Unauthorized access!');
+    }
+  }
 
-//tasks
-router.get('/app/tasks', Task.getTasks);
-router.post('/app/tasks', Task.newTask);
-router.get('/app/tasks/:id', Task.specificTask);
-router.put('/app/tasks/:id', Task.updateTask);
-router.delete('/app/tasks/:id', Task.deleteTask);
+  const redirectHome = (req, res, next) => {
+    if (req.session.userId) {
+      res.redirect('/home');
+    } else {
+      next();
+    }
+  }
 
-//logs
-router.get('/app/logs', Log.getLogs);
-router.post('/app/logs', Log.newLog);
-router.get('/app/logs/:id', Log.specificLog);
-router.delete('/app/logs/:id', Log.deleteLog);
+  /* GET home page. */
+  app.get('/', function (req, res, next) {
+    console.log(req.session);
+    res.send("Hello");
+  });
 
-//traineeStatus
-router.get('/app/status', Status.getStatus);
-router.post('/app/status', Status.newStatus);
+  //users
+  app.get('/app/users', trainerRole, function (req, res) {
+    User.getUsers(req, res);
+  });
+  app.post('/app/users', User.newUser);
+  app.get('/app/users/:id', User.specificUser);
+  app.put('/app/users/:id', User.updateUser);
+  app.put('/app/users/:id/updateTrainer', User.updateTrainer);
 
-//advanced routers
-// router.get('/app/users/:id1/tasks/:id2', Task.durationDetails);
+  //modules
+  app.get('/app/modules', Module.getModules);
+  app.post('/app/modules', Module.newModule);
+  app.get('/app/modules/:id', Module.specificModule);
+  app.put('/app/modules/:id', Module.updateModule);
+  app.delete('/app/modules/:id', Module.deleteModule);
+  app.get('/app/modules/:id/tasks', Module.getTasks);
+  app.post('/app/modules/:id/tasks', Module.newTask);
 
-module.exports = router;
+  //tasks
+  app.get('/app/tasks', Task.getTasks);
+  app.post('/app/tasks', Task.newTask);
+  app.get('/app/tasks/:id', Task.specificTask);
+  app.put('/app/tasks/:id', Task.updateTask);
+  app.delete('/app/tasks/:id', Task.deleteTask);
+
+  //logs
+  app.get('/app/logs', Log.getLogs);
+  app.post('/app/logs', Log.newLog);
+  app.get('/app/logs/:id', Log.specificLog);
+  app.delete('/app/logs/:id', Log.deleteLog);
+
+  //traineeStatus
+  app.get('/app/status', Status.getStatus);
+  app.post('/app/status', Status.newStatus);
+
+  app.get('/signup', redirectHome, (req, res) => {
+    res.render('signup');
+  });
+
+  app.get('/signin', redirectHome, (req, res) => {
+    res.render('signin');
+  });
+
+  app.get('/home', redirectLogin, (req, res) => {
+    console.log(req.session);
+    res.render('home');
+  });
+
+  app.get('/logout', redirectLogin, (req, res) => {
+    req.session.destroy(err => {
+      res.redirect('/');
+    });
+  });
+
+  app.post('/signup', redirectHome, function (req, res, next) {
+    User.newUser(req, res)
+  });
+
+  app.post('/signin', redirectHome, function (req, res) {
+    User.login(req, res);
+  });
+
+}
