@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     moduleId: DataTypes.INTEGER,
     taskId: DataTypes.INTEGER,
     status: DataTypes.STRING
-  }, {});
+  }, {timestamps: false});
   traineeStatus.associate = function (models) {
     traineeStatus.belongsTo(models.user, {
       as: 'user',

@@ -3,7 +3,8 @@ const task = require('../models').task;
 var Op = require('sequelize').Op;
 
 async function nonDuplicateTask(id, name) {
-  if(name != undefined) {
+  console.log(id);
+  if(name != undefined && id != undefined) {
     let tasks = await task.findAll({
       raw : true,
       where : {
@@ -14,14 +15,22 @@ async function nonDuplicateTask(id, name) {
       }
     })
     return typeof tasks !== 'undefined' && tasks.length > 0 ? "409" : "200";
-  } else {
+  } else if(id != undefined) {
     let tasks = await task.findAll({
       where : {
          id : id
       },
       attributes : ['id', 'name']
     })
-    return typeof tasks !== 'undefined' && tasks.length > 0 ? user : "404";
+    return typeof tasks !== 'undefined' && tasks.length > 0 ? tasks : "409";
+  } else {
+    let tasks = await task.findAll({
+      where : {
+         name : name
+      },
+      attributes : ['id', 'name']
+    })
+    return typeof tasks !== 'undefined' && tasks.length > 0 ? tasks : "409";
   }
 }
 

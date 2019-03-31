@@ -1,5 +1,10 @@
 const user = require('../models').user;
+const log = require('../models').log;
+const mod = require('../models').module;
+const traineeStatus = require('../models').traineeStatus;
 const userValidate = require(`../validations/user`);
+const moduleValidate = require(`../validations/module`);
+const sequelize = require('sequelize');
 
 function getUsers(req, res) {
   return user
@@ -169,6 +174,98 @@ async function getRole(email) {
   return role;
 }
 
+function assignModule(req, res) {
+  // console.log("inside1")
+  // traineeStatus
+  // .build({
+  //   userId: req.params.id,
+  //   moduleId: req.body.moduleId,
+  //   status: "assigned"
+  // })
+  // .save()
+  // .then(() => {
+  //   console.log("inside2");
+  //   mod
+  //   .findOne({
+  //     raw : true,
+  //     where : {
+  //       id : req.body.moduleId
+  //     },
+  //     attributes : ['tasksId']
+  //   })
+  //   .then((tasks) => {
+  //     res.send(tasks);
+  //     console.log(tasks);
+  //   })
+  // })
+  // .catch((error) => res.status(400).send(error));
+userValidate.userExists(req.params.id).then((users) =>{
+  if(users != '404') {
+    moduleValidate.modleExists(req.body.moduleId).then((modules) => {
+      if(modules != `404`) {
+        traineeStatus
+        .build({
+          userId: req.params.id,
+          moduleId: req.body.moduleId,
+          status: "assigned"
+        })
+        .save()
+        .then(() => {
+          mod
+          .findOne({
+            raw : true,
+            where : {
+              id : req.body.moduleId
+            },
+            attributes : ['tasksId']
+          })
+          .then((tasks) => {
+            console.log(tasks);
+            for(let i = 0; i < tasks.tasksId.length; i++) {
+              traineeStatus
+              .build({
+                userId: req.params.id,
+                taskId: tasks.tasksId[i],
+                status: "assigned"
+              })
+              .save()
+            }
+          }).then(() => {
+              log
+              .build({
+                entity: "module",
+                status: "assigned",
+                time : sequelize.fn('NOW'),
+                userId : req.params.id,
+                moduleId : req.body.id,
+                trainerId : users[0].trainerId
+              })
+              .save()
+            }).then(() => {
+                log
+                .build({
+                  entity: "task",
+                  status: "assigned",
+                  time : sequelize.fn('NOW'),
+                  userId : req.params.id,
+                  taskId : tasks.tasksId[0],
+                  trainerId : users[0].trainerId
+                })
+                .save()
+            })
+        })
+        .catch((error) => res.status(400).send(error));
+      } else {
+        res.status(404).send(`Module Does Not Exist`);
+      }
+    })
+  } else {
+    res.status(404).send(`User Does Not Exist`);
+  }
+})
+
+}
+
 module.exports = {
   getUsers,
   newUser,
@@ -177,5 +274,6 @@ module.exports = {
   updateTrainer,
   deleteUser,
   getRole,
-  login
+  login,
+  assignModule
 };

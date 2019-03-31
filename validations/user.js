@@ -37,7 +37,7 @@ async function userExists(id, email) {
       },
       attributes : ['id', 'name', 'email', 'password', 'type', 'trainerId', 'joinDate', 'trainingDuration']
     })
-    return typeof users !== 'undefined' && users.length > 0 ? user : "404";
+    return typeof users !== 'undefined' && users.length > 0 ? users : "404";
   }
 }
 
