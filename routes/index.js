@@ -16,10 +16,12 @@ const redirectLogin = (req, res, next) => {
 
 const trainerRole = (req, res, next) => {
   console.log(req.session);
-  if(req.session.type == "trainer" && req.session.userId) {
-    next();
-  } else {
-    res.status(401).send('Unauthorized access!');
+  if (req.session.type == "trainer" && req.session.userId) {
+    if (req.session.type == "trainer" && req.session.userId) {
+      next();
+    } else {
+      res.status(401).send('Unauthorized access!');
+    }
   }
 }
 
@@ -95,9 +97,9 @@ router.get('/logout', redirectLogin, (req, res) => {
 router.post('/signup', redirectHome, function (req, res, next) {
   User.newUser(req, res)
 });
+
 router.post('/signin', redirectHome, function (req, res) {
   User.login(req, res);
 });
 
 module.exports = router;
-

@@ -66,6 +66,25 @@ function login(req, res) {
     })   
 }
 
+function login(req, res) {
+  user.findOne({
+      where: {
+        email: req.body.email,
+        password: req.body.password
+      }
+    })
+    .then(user => {
+      if(!user) {
+        res.status(400).send('Invalid Credentials')
+      } else {
+      req.session.type = user.type;
+      req.session.userId = user.id;
+      console.log(req.session); 
+      res.redirect('home'); 
+      }
+    })   
+}
+
 function specificUser(req, res) {
   userValidate.userExists(req.params.id).then((user) => {
       if(user != `404`) {
@@ -175,7 +194,10 @@ module.exports = {
   specificUser,
   updateUser,
   updateTrainer,
+<<<<<<< HEAD
   deleteUser,
+=======
+>>>>>>> 310cbff4ecc67275cdaad0a1c5180b388c1f6649
   getRole,
   login
 };
