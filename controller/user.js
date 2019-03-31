@@ -5,8 +5,8 @@ const task = require('../models').task;
 const log = require('../models').log;
 const traineeStatus = require('../models').traineeStatus;
 const userValidate = require(`../validations/user`);
-const moduleValidate = require(`../validations/module`);
 var mail = require('../utils/email');
+const moduleValidate = require(`../validations/module`);
 
 function getUsers(req, res) {
   return user
