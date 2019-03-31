@@ -121,7 +121,7 @@ function updateUser(req, res) {
   }
 }
 
-function updateTrainer(req, res) {
+function updateTrainer(req, res) {s
   return user
   .findByPk(req.params.id)
   .then((userid) => {
@@ -175,33 +175,9 @@ async function getRole(email) {
 }
 
 function assignModule(req, res) {
-  // console.log("inside1")
-  // traineeStatus
-  // .build({
-  //   userId: req.params.id,
-  //   moduleId: req.body.moduleId,
-  //   status: "assigned"
-  // })
-  // .save()
-  // .then(() => {
-  //   console.log("inside2");
-  //   mod
-  //   .findOne({
-  //     raw : true,
-  //     where : {
-  //       id : req.body.moduleId
-  //     },
-  //     attributes : ['tasksId']
-  //   })
-  //   .then((tasks) => {
-  //     res.send(tasks);
-  //     console.log(tasks);
-  //   })
-  // })
-  // .catch((error) => res.status(400).send(error));
 userValidate.userExists(req.params.id).then((users) =>{
   if(users != '404') {
-    moduleValidate.modleExists(req.body.moduleId).then((modules) => {
+    moduleValidate.moduleExists(req.body.moduleId).then((modules) => {
       if(modules != `404`) {
         traineeStatus
         .build({
@@ -230,7 +206,8 @@ userValidate.userExists(req.params.id).then((users) =>{
               })
               .save()
             }
-          }).then(() => {
+            return tasks;
+          }).then((tasks) => {
               log
               .build({
                 entity: "module",
@@ -241,7 +218,8 @@ userValidate.userExists(req.params.id).then((users) =>{
                 trainerId : users[0].trainerId
               })
               .save()
-            }).then(() => {
+              return tasks;
+            }).then((tasks) => {
                 log
                 .build({
                   entity: "task",

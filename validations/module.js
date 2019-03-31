@@ -13,5 +13,5 @@ async function moduleExists(id) {
 }
 
 module.exports = {
-  moduleExists,
+  moduleExists
 }

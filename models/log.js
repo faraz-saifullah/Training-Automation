@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const log = sequelize.define('log', {
     entity: DataTypes.STRING,
     status: DataTypes.STRING,
-    time: DataTypes.DATE
+    time: DataTypes.DATE,
+    trainerId: DataTypes.INTEGER
   }, {});
   log.associate = function(models) {
     log.belongsTo(models.user, {
