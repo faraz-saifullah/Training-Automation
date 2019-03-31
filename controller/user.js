@@ -218,7 +218,7 @@ async function getRole(email) {
 function assignModule(req, res) {
 userValidate.userExists(req.params.id).then((users) =>{
   if(users != '404') {
-    moduleValidate.modleExists(req.body.moduleId).then((modules) => {
+    moduleValidate.moduleExists(req.body.moduleId).then((modules) => {
       if(modules != `404`) {
         traineeStatus
         .build({
@@ -297,4 +297,3 @@ module.exports = {
   assignModule
 
 };
-
