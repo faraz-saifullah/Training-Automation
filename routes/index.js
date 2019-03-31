@@ -5,100 +5,79 @@ var Module = require('../controller/module')
 var Task = require('../controller/task')
 var Log = require('../controller/log')
 var Status = require('../controller/status')
+var role = require('../controller/auth');
+  var mail = require('../utils/email');
 
-const redirectLogin = (req, res, next) => {
-  if (!req.session.userId) {
-    res.redirect('/signin');
-  } else {
-    next();
-  }
-}
-
-const trainerRole = (req, res, next) => {
-  console.log(req.session);
-  if (req.session.type == "trainer" && req.session.userId) {
-    if (req.session.type == "trainer" && req.session.userId) {
-      next();
-    } else {
-      res.status(401).send('Unauthorized access!');
-    }
-  }
-}
-
-const redirectHome = (req, res, next) => {
-  if (req.session.userId) {
-    res.redirect('/home');
-  } else {
-    next();
-  }
-}
-
+// let HelperOptions = {
+//   from: '"Shreyas" <schoudhari@techracers.io>',
+//   to: 'shreyas@mailinator.com',
+//   subject: 'dd',
+//   text: 'Aai zawali'
+// };
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  console.log(req.session);
+  // mail.sendMail(HelperOptions);
   res.send("Hello");
 });
 
 //users
-router.get('/app/users', trainerRole, function (req, res) {
-  User.getUsers(req, res);
-});
-router.post('/app/users', User.newUser);
+router.get('/app/users', role.traineeRole, User.getUsers);
 router.get('/app/users/:id', User.specificUser);
-router.put('/app/users/:id', User.updateUser);
-router.delete('/app/users/:id', User.deleteUser);
-router.put('/app/users/:id/updateTrainer', User.updateTrainer);
+router.put('/app/users/:id', role.traineeTrainerRole, User.updateUser);
+router.delete('/app/users/:id', role.trainerRole, User.deleteUser);
+router.put('/app/users/:id/updateTrainer', role.traineeTrainerRole, User.updateTrainer);
 
 //modules
-router.get('/app/modules', Module.getModules);
-router.post('/app/modules', Module.newModule);
-router.get('/app/modules/:id', Module.specificModule);
-router.put('/app/modules/:id', Module.updateModule);
-router.delete('/app/modules/:id', Module.deleteModule);
-router.get('/app/modules/:id/tasks', Module.getAllTasks);
-router.post('/app/modules/:id/tasks', Module.newTask);
+router.get('/app/modules', role.adminTrainerRole, Module.getModules);
+router.post('/app/modules', role.trainerRole,Module.newModule);
+router.get('/app/modules/:id', role.traineeTrainerRole, Module.specificModule);
+router.put('/app/modules/:id', role.trainerRole, Module.updateModule);
+router.delete('/app/modules/:id', role.trainerRole, Module.deleteModule);
+router.get('/app/modules/:id/tasks', role.traineeTrainerRole, Module.getAllTasks);
+router.post('/app/modules/:id/tasks', role.trainerRole, Module.newTask);
 
 //tasks
-router.get('/app/tasks', Task.getTasks);
-router.post('/app/tasks', Task.newTask);
-router.get('/app/tasks/:id', Task.specificTask);
-router.put('/app/tasks/:id', Task.updateTask);
-router.delete('/app/tasks/:id', Task.deleteTask);
+router.get('/app/tasks', role.traineeTrainerRole, Task.getTasks);
+router.post('/app/tasks', role.trainerRole, Task.newTask);
+router.get('/app/tasks/:id', role.traineeTrainerRole, Task.specificTask);
+router.put('/app/tasks/:id', role.trainerRole, Task.updateTask);
+router.delete('/app/tasks/:id', role.trainerRole, Task.deleteTask);
 
 //logs
-router.get('/app/logs', Log.getLogs);
-router.post('/app/logs', Log.newLog);
-router.get('/app/logs/:id', Log.specificLog);
-router.delete('/app/logs/:id', Log.deleteLog);
+router.get('/app/logs', role.adminTrainerRole, Log.getLogs);
+router.post('/app/logs', role.traineeTrainerRole, Log.newLog);
+router.get('/app/logs/:id', role.trainerRole, Log.specificLog);
+//add new router for trainee specific log
+router.delete('/app/logs/:id', role.trainerRole,Log.deleteLog);
 
 //traineeStatus
-router.get('/app/status', Status.getStatus);
-router.post('/app/status', Status.newStatus);
+router.get('/app/status', role.trainerRole, Status.getStatus);
+router.post('/app/status', role.traineeTrainerRole, Status.newStatus);
 
-router.get('/signup', redirectHome, (req, res) => {
+router.get('/signup', role.adminRole, (req, res) => {
   res.render('signup');
 });
 
-router.get('/signin', redirectHome, (req, res) => {
+router.get('/signin', role.redirectHome, (req, res) => {
   res.render('signin');
 });
 
-router.get('/home', redirectLogin, (req, res) => {
+router.get('/home', role.redirectLogin, (req, res) => {
   console.log(req.session);
   res.render('home');
 });
 
-router.get('/logout', redirectLogin, (req, res) => {
+router.get('/logout', role.redirectLogin, (req, res) => {
   req.session.destroy(err => {
     res.redirect('/');
   });
 });
 
-router.post('/signup', redirectHome, function (req, res, next) {
+router.post('/signup', function (req, res, next) {
   User.newUser(req, res)
 });
 
-router.post('/signin', redirectHome, function (req, res) {
+router.post('/signin', role.redirectHome, function (req, res) {
   User.login(req, res);
 });
 

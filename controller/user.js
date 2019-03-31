@@ -1,5 +1,6 @@
 const user = require('../models').user;
 const userValidate = require(`../validations/user`);
+var mail = require('../utils/email');
 
 function getUsers(req, res) {
   return user
@@ -30,15 +31,24 @@ function newUser(req, res) {
       user
       .build({
         name : req.body.name,
-        email: email,
+        email: req.body.email,
         password: req.body.password,
         type: req.body.type
       })
       .save()
-      .then((newUser) => {
-        //res.status(201).send(newUser);
-        req.session.userId = user.id;
-        req.session.type = user.type;
+      .then((user) => {
+        console.log(user.email);
+        var usermail = user.email;
+        var pwd = user.password;
+        let HelperOptions = {
+          from: '"Shreyas" <schoudhari@techracers.io>',
+          to: usermail,
+          subject: 'Welcome to Deqode!',
+          text: 'Email id:'+usermail+' Password:'+pwd
+        };
+        mail.sendMail(HelperOptions);
+        //req.session.userId = user.id;
+        //req.session.type = user.type;
         res.render('home')
       })
       .catch((error) => res.status(400).send(error));
@@ -112,8 +122,7 @@ function updateUser(req, res) {
                 .update({
                   name : req.body.name || userid.name,
                   email: req.body.email || userid.email,
-                  password: req.body.password || userid.password,
-                  type: req.body.type || userid.type,
+                  password: req.body.password || userid.password
                 })
                 .then(() => { 
                   res.status(200).send(userid)
@@ -194,10 +203,7 @@ module.exports = {
   specificUser,
   updateUser,
   updateTrainer,
-<<<<<<< HEAD
   deleteUser,
-=======
->>>>>>> 310cbff4ecc67275cdaad0a1c5180b388c1f6649
   getRole,
   login
 };
