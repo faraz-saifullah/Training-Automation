@@ -12,6 +12,7 @@ var SequelizeStore = require('connect-session-sequelize')(session.Store);
 var db = require('./models'),db;
 var models = require('./models');
 var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index');
 
 var app = express();
 
@@ -69,10 +70,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', indexRouter);
+app.use('/', indexRouter);
 app.use('/users', usersRouter);
-var indexRouter = require('./routes/index')(app, passport);
-require('./config/passport/passport.js')(passport, models.user);
+// var indexRouter = require('./routes/index')(app, passport);
+// require('./config/passport/passport.js')(passport, models.user);
 
 //Sync Database
 // models.sequelize
