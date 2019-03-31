@@ -3,10 +3,12 @@ const sequelize = require('sequelize');
 const mod = require('../models').module;
 const task = require('../models').task;
 const log = require('../models').log;
+var mail = require('../utils/email');
 const traineeStatus = require('../models').traineeStatus;
 const userValidate = require(`../validations/user`);
 var mail = require('../utils/email');
 const moduleValidate = require(`../validations/module`);
+const sequelize = require('sequelize');
 
 function getUsers(req, res) {
   return user
@@ -216,7 +218,7 @@ async function getRole(email) {
 function assignModule(req, res) {
 userValidate.userExists(req.params.id).then((users) =>{
   if(users != '404') {
-    moduleValidate.moduleExists(req.body.moduleId).then((modules) => {
+    moduleValidate.modleExists(req.body.moduleId).then((modules) => {
       if(modules != `404`) {
         traineeStatus
         .build({
@@ -293,4 +295,6 @@ module.exports = {
   getRole,
   login,
   assignModule
+
 };
+

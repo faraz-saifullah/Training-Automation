@@ -15,9 +15,12 @@
     "bluebird": "^3.5.3",
     "connect-flash": "^0.1.1",
     "connect-session-sequelize": "^6.0.0",
+<<<<<<< 04ebb50c24841fcea5085e302925f85a1b49bb55
 =======
     "connect-flash": "^0.1.1",
 >>>>>>> added new packages
+=======
+>>>>>>> Unfinished changes
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "email-templates": "^2.7.1",
@@ -48,6 +51,7 @@
     "pg": "^7.9.0",
     "pug": "^2.0.3",
     "request": "^2.88.0",
+<<<<<<< 04ebb50c24841fcea5085e302925f85a1b49bb55
 <<<<<<< 4224f8f0cdf059914d8431de1572fd4b4da82d39
     "sequelize": "^5.2.0"
   },
@@ -57,5 +61,16 @@
     "sequelize": "^5.2.0",
     "trello-node-api": "0.0.7"
 >>>>>>> Added admin+trainer dashboard
+=======
+<<<<<<< f2c9c936df2327a0d40e0cc9de129fa030ee0011
+    "sequelize": "^5.2.0",
+    "trello-node-api": "0.0.7"
+=======
+    "sequelize": "^5.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+>>>>>>> Unfinished changes
+>>>>>>> Unfinished changes
   }
 }
