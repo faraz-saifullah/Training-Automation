@@ -73,5 +73,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+// Sync Database
+models.sequelize
+  .sync()
+  .then(function() {
+    console.log('Database Connected');
+});
+
 
 module.exports = app;

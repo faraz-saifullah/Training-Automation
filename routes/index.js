@@ -1,75 +1,73 @@
+var createError = require('http-errors');
 var express = require('express');
-var router = express.Router();
-var User = require('../controller/user')
-var Module = require('../controller/module')
-var Task = require('../controller/task')
-var Log = require('../controller/log')
-var Status = require('../controller/status')
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+const exphbs = require('express-handlebars');
+var session = require('express-session');
+var Sequelize = require('sequelize')
+var SequelizeStore = require('connect-session-sequelize')(session.Store);
+var db = require('./models'),db;
+var models = require('./models');
+var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index').router;
 
+var app = express();
 
-//users
-router.get('/app/users', trainerRole, function (req, res) {
-  User.getUsers(req, res);
-});
-router.post('/app/users', User.newUser);
-router.get('/app/users/:id', User.specificUser);
-router.put('/app/users/:id', User.updateUser);
-router.delete('/app/users/:id', User.deleteUser);
-router.put('/app/users/:id/updateTrainer', User.updateTrainer);
-router.post('/app/users/:id/assignModule', User.assignModule);
+var sequelize = db.sequelize;
 
-//modules
-router.get('/app/modules', Module.getModules);
-router.post('/app/modules', Module.newModule);
-router.get('/app/modules/:id', Module.specificModule);
-router.put('/app/modules/:id', Module.updateModule);
-router.delete('/app/modules/:id', Module.deleteModule);
-router.get('/app/modules/:id/tasks', Module.getAllTasks);
-router.post('/app/modules/:id/tasks', Module.newTask);
+const {
+  PORT = 3000,
+  NODE_ENV = 'development',
+  SESS_NAME = 'sid',
+  
+} = process.env
 
-//tasks
-router.get('/app/tasks', Task.getTasks);
-router.post('/app/tasks', Task.newTask);
-router.get('/app/tasks/:id', Task.specificTask);
-router.put('/app/tasks/:id', Task.updateTask);
-router.delete('/app/tasks/:id', Task.deleteTask);
+app.use(session({
+  name: SESS_NAME,
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false, 
+  cookie: {
+    maxAge: 1000000, 
+    sameSite: true,
+  },
+  store: new SequelizeStore({
+    db: sequelize
+  }),
+  proxy: true
+}));
 
-//logs
-router.get('/app/logs', Log.getLogs);
-router.post('/app/logs', Log.newLog);
-router.get('/app/logs/:id', Log.specificLog);
-router.delete('/app/logs/:id', Log.deleteLog);
+// view engine setup
+const viewsPath = path.join(__dirname, 'views');
+const layoutsPath = path.join(viewsPath, 'layouts');
+const partialsPath = path.join(viewsPath, 'partials');
+app.set('views', viewsPath);
 
-//traineeStatus
-router.get('/app/status', Status.getStatus);
-router.post('/app/status', Status.newStatus);
-
-router.get('/signup', redirectHome, (req, res) => {
-  res.render('signup');
-});
-
-router.get('/signin', redirectHome, (req, res) => {
-  res.render('signin');
+const exphbsConfig = exphbs.create({
+  defaultLayout: 'main',
+  layoutsDir: layoutsPath,
+  partialsDir: [partialsPath],
+  extname: '.hbs'
 });
 
-router.get('/home', redirectLogin, (req, res) => {
-  console.log(req.session);
-  res.render('home');
+app.engine('hbs', exphbsConfig.engine);
+app.set('view engine', '.hbs');
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+// Sync Database
+models.sequelize
+  .sync()
+  .then(function() {
+    console.log('Database Connected');
 });
 
-router.get('/logout', redirectLogin, (req, res) => {
-  req.session.destroy(err => {
-    res.redirect('/');
-  });
-});
-
-router.post('/signup', redirectHome, function (req, res, next) {
-  User.newUser(req, res)
-});
-
-router.post('/signin', redirectHome, function (req, res) {
-  User.login(req, res);
-});
-
-module.exports = router;
-
+module.exports = app;
