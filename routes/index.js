@@ -1,4 +1,5 @@
 var express = require('express');
+var router = express.Router();
 var User = require('../controller/user')
 var Module = require('../controller/module')
 var Task = require('../controller/task')
@@ -65,8 +66,10 @@ router.get('/logout', redirectLogin, (req, res) => {
 router.post('/signup', redirectHome, function (req, res, next) {
   User.newUser(req, res)
 });
+
 router.post('/signin', redirectHome, function (req, res) {
   User.login(req, res);
 });
 
 module.exports = router;
+
