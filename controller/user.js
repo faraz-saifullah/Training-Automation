@@ -4,6 +4,7 @@ const task = require('../models').task;
 const log = require('../models').log;
 const traineeStatus = require('../models').traineeStatus;
 const userValidate = require(`../validations/user`);
+const moduleValidate = require(`../validations/module`);
 
 function getUsers(req, res) {
   return user
@@ -138,6 +139,39 @@ function deleteUser(req, res) {
 }
 
 function assignModule(req, res) {
+  userValidate.userExists(req.params.id).then((users) =>{
+    if(users != '404') {
+      moduleValidate.moduleExists(req.body.moduleId).then((modules) => {
+        if(modules != `404`) {
+          traineeStatus
+          .build({
+            userId: req.params.id,
+            moduleId: req.body.moduleId,
+            status: "assigned"
+          })
+          .save()
+          .then(() => {
+            mod
+            .findOne({
+              raw : true,
+              where : {
+                id : req.body.moduleId
+              },
+              attributes : ['tasksId']
+            })
+            .then((tasks) => {
+              console.log(tasks);
+            })
+          })
+          .catch((error) => res.status(400).send(error));
+        } else {
+          res.status(404).send(`Module Does Not Exist`);
+        }
+      })
+    } else {
+      res.status(404).send(`User Does Not Exist`);
+    }
+  })
 
 }
 

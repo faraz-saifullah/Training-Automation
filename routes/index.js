@@ -18,6 +18,7 @@ router.get('/app/users/:id', User.specificUser);
 router.put('/app/users/:id', User.updateUser);
 router.delete('/app/users/:id', User.deleteUser);
 router.put('/app/users/:id/updateTrainer', User.updateTrainer);
+router.post('/app/users/:id/assignModule', User.assignModule);
 
 //modules
 router.get('/app/modules', Module.getModules);
