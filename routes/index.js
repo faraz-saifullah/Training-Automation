@@ -7,7 +7,6 @@ var Log = require('../controller/log')
 var Status = require('../controller/status')
 var role = require('../controller/auth');
 var mail = require('../utils/email');
-var sess;
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.redirect('/signin');
@@ -81,7 +80,4 @@ router.post('/signin', role.redirectHome, function (req, res) {
   User.login(req, res);
 });
 
-module.exports = {
-  router,
-  sess
-};
+module.exports = router;

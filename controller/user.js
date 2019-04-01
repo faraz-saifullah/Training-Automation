@@ -394,5 +394,6 @@ module.exports = {
 	getRole,
 	login,
 	assignModule,
-	taskDone
+	taskDone,
+	profile
 };
