@@ -2,10 +2,10 @@ const user = require(`../models`).user;
 const sequelize = require(`sequelize`);
 const mod = require(`../models`).module;
 const log = require(`../models`).log;
-var mail = require(`../utils/email`);
+const task = require(`../models`).task;
+const mail = require(`../utils/email`);
 const traineeStatus = require(`../models`).traineeStatus;
 const userValidate = require(`../validations/user`);
-var mail = require(`../utils/email`);
 const moduleValidate = require(`../validations/module`);
 const taskValidate = require(`../validations/tasks`);
 
@@ -45,8 +45,8 @@ function newUser(req, res) {
 					.save()
 					.then((user) => {
 						console.log(user.email);
-						var usermail = user.email;
-						var pwd = user.password;
+						let usermail = user.email;
+						let pwd = user.password;
 						let HelperOptions = {
 							from: `Shreyas <schoudhari@techracers.io>`,
 							to: usermail,
@@ -249,9 +249,16 @@ function assignModule(req, res) {
 											where: {
 												id: req.body.moduleId
 											},
-											attributes: [`tasksId`]
+											attributes: [`tasksId`, `name`]
 										})
 										.then((tasks) => {
+											let HelperOptions = {
+												from: `Shreyas <schoudhari@techracers.io>`,
+												to: users.email,
+												subject: `New Module Assigned`,
+												text: `You have been assigned a new module : ${tasks.name}`
+											};
+											mail.sendMail(HelperOptions);
 											for (let i = 0; i < tasks.tasksId.length; i++) {
 												console.log(i);
 												taskValidate.notAlreadyAssigned(req.params.id, tasks.tasksId[i]).then((duplicateTask) => {
@@ -395,7 +402,25 @@ function taskDone(req, res) {
 															taskId: unfinishedTask.taskId,
 															trainerId: users[0].trainerId
 														})
-														.save();
+														.save()
+														.then(() => {
+															task
+																.findOne({
+																	raw: true,
+																	where: {
+																		id: unfinishedTask.taskId
+																	}
+																})
+																.then((task) => {
+																	let HelperOptions = {
+																		from: `Shreyas <schoudhari@techracers.io>`,
+																		to: users.email,
+																		subject: `New Task Assigned`,
+																		text: `You have been assigned a new task\n Name: ${task.name}\nDescription:${task.description}\nDuration:${task.duration}`
+																	};
+																	mail.sendMail(HelperOptions);
+																})
+														})
 												}
 											});
 									});

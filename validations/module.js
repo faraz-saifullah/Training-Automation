@@ -1,6 +1,6 @@
 `use strict`;
-const mod = require('../models').module;
-const traineeStatus = require('../models').traineeStatus;
+const mod = require(`../models`).module;
+const traineeStatus = require(`../models`).traineeStatus;
 
 async function moduleExists(id) {
 	let modules = await mod.findAll({
@@ -8,9 +8,9 @@ async function moduleExists(id) {
 		where: {
 			id: id,
 		},
-		attributes: ['id', 'name', 'duration', 'tasksId']
+		attributes: [`id`, `name`, `duration`, `tasksId`]
 	})
-	return typeof modules !== 'undefined' && modules.length > 0 ? modules : "404";
+	return typeof modules !== `undefined` && modules.length > 0 ? modules : "404";
 }
 
 async function notAlreadyAssigned(userId, moduleId) {

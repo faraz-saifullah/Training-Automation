@@ -1,11 +1,10 @@
-var createError = require('http-errors');
+
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const exphbs = require('express-handlebars');
 var session = require('express-session');
-var Sequelize = require('sequelize');
 var SequelizeStore = require('connect-session-sequelize')(session.Store);
 var db = require('./models'),db;
 var models = require('./models');
@@ -71,3 +70,4 @@ models.sequelize
 });
 
 module.exports = app;
+
