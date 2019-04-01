@@ -95,7 +95,16 @@ function login(req, res) {
     })   
 }
 
+function profile(req, res) {
+  user
+    .findByPk(req.session.userId)
+    .then(user => {
+      res.status(200).send(user);
+    })
+}
+
 function specificUser(req, res) {
+  console.log("==========");
   userValidate.userExists(req.params.id).then((user) => {
       if(user != `404`) {
         res.status(200).send(user);  
@@ -115,6 +124,9 @@ function updateUser(req, res) {
       if(users != `404`) {
         userValidate.userExists(req.params.id, email).then((users) => {
           if(users != `409`) {
+            if(req.params.id != req.session.userId) {
+              res.status(401).send("Unauthorized access");
+            }
             return user
             .findByPk(req.params.id)
             .then((userid) => {
@@ -200,6 +212,7 @@ async function getRole(email) {
 module.exports = {
   getUsers,
   newUser,
+  profile,
   specificUser,
   updateUser,
   updateTrainer,

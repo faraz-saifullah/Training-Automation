@@ -17,7 +17,7 @@ function getModules(req, res) {
 }
 
 function newModule(req, res) {
-  taskValidation.taskExists(req.body.tasksId).then((tasks) =>{
+  taskValidation.taskExists(reseq.body.tasksId).then((tasks) =>{
     if(tasks != "404") {
       mod
       .build({
