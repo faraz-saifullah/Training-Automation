@@ -1,15 +1,15 @@
-const mod = require('../models').module;
-const task = require('../models').task;
-const taskValidation = require('../validations/tasks');
-const moduleValidation = require('../validations/module');
+const mod = require(`../models`).module;
+const task = require(`../models`).task;
+const taskValidation = require(`../validations/tasks`);
+const moduleValidation = require(`../validations/module`);
 
 function getModules(req, res) {
 	return mod
 		.findAll({
-			attributes: ['id', 'name', 'duration', 'tasksId']
+			attributes: [`id`, `name`, `duration`, `tasksId`]
 		})
 		.then((mods) => {
-			res.status(200).send(mods)
+			res.status(200).send(mods);
 		})
 		.catch((error) => {
 			res.status(400).send(error);
@@ -18,7 +18,7 @@ function getModules(req, res) {
 
 function newModule(req, res) {
 	taskValidation.taskExists(req.body.tasksId).then((tasks) => {
-		if (tasks != "404") {
+		if (tasks != `404`) {
 			mod
 				.build({
 					name: req.body.name,
@@ -29,17 +29,17 @@ function newModule(req, res) {
 				.then((newMod) => res.status(201).send(newMod))
 				.catch((error) => res.status(400).send(error));
 		} else {
-			res.status(404).send("Some Tasks Does Not Eist");
+			res.status(404).send(`Some Tasks Does Not Eist`);
 		}
 	})
 }
 
 function specificModule(req, res) {
 	moduleValidation.moduleExists(req.params.id).then((modules) => {
-			if (modules != "404") {
+			if (modules != `404`) {
 				res.status(200).send(modules);
 			} else {
-				res.status(404).send("Module Does Not Exist");
+				res.status(404).send(`Module Does Not Exist`);
 			}
 		})
 		.catch((error) => {
@@ -49,9 +49,9 @@ function specificModule(req, res) {
 
 function updateModule(req, res) {
 	let arr = [];
-	typeof req.body.tasksId == 'object' ? arr = req.body.tasksId : arr.push(req.body.tasksId);
+	typeof req.body.tasksId == `object` ? arr = req.body.tasksId : arr.push(req.body.tasksId);
 	taskValidation.taskExists(req.body.tasksId).then((tasks) => {
-		if (tasks != "404") {
+		if (tasks != `404`) {
 			return mod
 				.findByPk(req.params.id)
 				.then((modid) => {
@@ -63,17 +63,17 @@ function updateModule(req, res) {
 								tasksId: arr || modid.tasksId
 							})
 							.then(() => {
-								res.status(200).send(modid)
+								res.status(200).send(modid);
 							})
 							.catch((error) => {
 								res.status(400).send(error);
 							});
 					} else {
-						res.status(404).send("Module Does Not Exist");
+						res.status(404).send(`Module Does Not Exist`);
 					}
 				})
 		} else {
-			res.status(404).send("Some Tasks Does Not Eist");
+			res.status(404).send(`Some Tasks Does Not Eist`);
 		}
 	})
 }
@@ -83,7 +83,7 @@ function deleteModule(req, res) {
 		.findByPk(req.params.id)
 		.then(modid => {
 			if (!modid) {
-				return res.status(400).send('Module Does Not Exist');
+				return res.status(400).send(`Module Does Not Exist`);
 			}
 			return modid
 				.destroy()
@@ -100,7 +100,7 @@ function getAllTasks(req, res) {
 			where: {
 				id: req.params.id
 			},
-			attributes: ['tasksId'],
+			attributes: [`tasksId`],
 		})
 		.then((mods) => {
 			if (mods.length > 0) {
@@ -123,7 +123,7 @@ function getTask(id, res, index, length) {
 			where: {
 				id: id
 			},
-			attributes: ['id', 'name', 'description', 'duration']
+			attributes: [`id`, `name`, `description`, `duration`]
 		})
 		.then((mods) => {
 			res.status(200).write(JSON.stringify(mods));
@@ -145,7 +145,7 @@ function createNewTask(req, res, arr) {
 					tasksId: [...new Set(arr)] || modid.tasksId
 				})
 				.then(() => {
-					res.status(200).send(modid)
+					res.status(200).send(modid);
 				})
 				.catch((error) => {
 					res.status(400).send(modid);
@@ -161,13 +161,13 @@ function newTask(req, res) {
 			where: {
 				id: req.params.id
 			},
-			attributes: ['tasksId'],
+			attributes: [`tasksId`],
 		})
 		.then((mods) => {
 			taskValidation.taskExists(req.body.tasksId).then((tasks) => {
 				if (tasks != `404`) {
 					let arr = mods[0].tasksId;
-					if (typeof(req.body.tasksId) == "object") {
+					if (typeof(req.body.tasksId) == `object`) {
 						for (let i = 0; i < req.body.tasksId.length; i++) {
 							arr.push(Number(req.body.tasksId[i]));
 						}

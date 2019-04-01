@@ -1,10 +1,10 @@
-const log = require('../models').log
+const log = require(`../models`).log;
 
 function getLogs(req, res) {
 	return log
 		.findAll()
 		.then((logs) => {
-			res.status(200).send(logs)
+			res.status(200).send(logs);
 		})
 		.catch((error) => {
 			res.status(400).send(error);
@@ -30,7 +30,7 @@ function specificLog(req, res) {
 	return log
 		.findByPk(req.params.id)
 		.then((log) => {
-			res.status(200).send(log)
+			res.status(200).send(log);
 		})
 		.catch((error) => {
 			res.status(400).send(error);
@@ -43,7 +43,7 @@ function deleteLog(req, res) {
 		.then(logid => {
 			if (!logid) {
 				return res.status(400).send({
-					message: 'Log Not Found',
+					message: `Log Not Found`,
 				});
 			}
 			return logid

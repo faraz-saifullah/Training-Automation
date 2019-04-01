@@ -1,10 +1,10 @@
-const status = require('../models').traineeStatus
+const status = require(`../models`).traineeStatus;
 
 function getStatus(req, res) {
 	return status
 		.findAll()
 		.then((status) => {
-			res.status(200).send(status)
+			res.status(200).send(status);
 		})
 		.catch((error) => {
 			res.status(400).send(error);

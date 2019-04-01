@@ -19,26 +19,26 @@ async function nonDuplicateUser(email) {
 }
 
 async function userExists(id, email) {
-  if(email != undefined) {
-    let users = await user.findAll({
-      raw : true,
-      where : {
-         id : {
-          [Op.ne]: id
-        },
-         email : email
-      }
-    })
-    return typeof users !== 'undefined' && users.length > 0 ? "409" : "200";
-  } else {
-    let users = await user.findAll({
-      where : {
-         id : id
-      },
-      attributes : ['id', 'name', 'email', 'password', 'type', 'trainerId', 'joinDate', 'trainingDuration']
-    })
-    return typeof users !== 'undefined' && users.length > 0 ? users : "404";
-  }
+	if (email != undefined) {
+		let users = await user.findAll({
+			raw: true,
+			where: {
+				id: {
+					[Op.ne]: id
+				},
+				email: email
+			}
+		})
+		return typeof users !== 'undefined' && users.length > 0 ? "409" : "200";
+	} else {
+		let users = await user.findAll({
+			where: {
+				id: id
+			},
+			attributes: ['id', 'name', 'email', 'password', 'type', 'trainerId', 'joinDate', 'trainingDuration']
+		})
+		return typeof users !== 'undefined' && users.length > 0 ? users : "404";
+	}
 }
 
 async function trainerExists(id) {
@@ -70,3 +70,4 @@ module.exports = {
 	validateEmail,
 	traineeExists
 }
+
