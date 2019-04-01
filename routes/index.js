@@ -7,7 +7,7 @@ var Log = require('../controller/log')
 var Status = require('../controller/status')
 var role = require('../controller/auth');
 var mail = require('../utils/email');
-var sess;
+
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.redirect('/signin');
@@ -19,7 +19,9 @@ router.get('/app/profile', User.profile);
 router.get('/app/specificUser/:id', User.specificUser);
 router.put('/app/users/:id', role.traineeTrainerRole, User.updateUser);
 router.delete('/app/users/:id', role.adminRole, User.deleteUser);
-router.put('/app/users/:id/updateTrainer', role.adminRole, User.updateTrainer); 
+router.put('/app/users/:id/updateTrainer', role.adminRole, User.updateTrainer);
+router.post('/app/users/:id/taskDone', role.traineeRole, User.taskDone);
+router.post('/app/users/:id/assignModule', role.trainerRole, User.assignModule);
 
 //modules
 router.get('/app/modules', role.redirectLogin, Module.getModules);
@@ -79,7 +81,4 @@ router.post('/signin', role.redirectHome, function (req, res) {
   User.login(req, res);
 });
 
-module.exports = {
-  router,
-  sess
-};
+module.exports = router;
