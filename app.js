@@ -1,18 +1,16 @@
 var createError = require('http-errors');
 var express = require('express');
-var router = express.Router();
-const passport = require('passport');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const exphbs = require('express-handlebars');
 var session = require('express-session');
-var Sequelize = require('sequelize');
+var Sequelize = require('sequelize')
 var SequelizeStore = require('connect-session-sequelize')(session.Store);
 var db = require('./models'),db;
 var models = require('./models');
 var usersRouter = require('./routes/users');
-var indexRouter = require('./routes/index');
+var indexRouter = require('./routes/index').router;
 
 var app = express();
 
@@ -39,14 +37,6 @@ app.use(session({
   }),
   proxy: true
 }));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use(function(req, res, next) {
-  res.locals.isAuthenticated = req.isAuthenticated();
-  next();
-})
 
 // view engine setup
 const viewsPath = path.join(__dirname, 'views');
@@ -79,6 +69,5 @@ models.sequelize
   .then(function() {
     console.log('Database Connected');
 });
-
 
 module.exports = app;

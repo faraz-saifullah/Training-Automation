@@ -6,9 +6,6 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="/signup">Create New Trainer/Trainee</a>
-      </li>
       <li class="nav-item">
         <a class="nav-link" href="/logout">Logout</a>
       </li>
@@ -16,13 +13,11 @@
   </div>
 </nav>
 
-<br><br>
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" href="/app/profile" id="viewUser" type="submit" data-toggle="modal"
-  data-target="#exampleModal">
+<button type="button" class="specificUser" type="submit" data-toggle="modal" data-target="#exampleModal">
   View/Edit Profile
 </button>
-{{!-- data-toggle="modal" data-target="#exampleModal" --}}
+
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   aria-hidden="true">
@@ -62,39 +57,60 @@
   </div>
 </div>
 
-<br><br><br>
-
-<button type="button" class="btn btn-primary" id="allUsers" type="submit">
-  View All Users
+<button type="button" class="specificUser" type="submit" data-toggle="modal" data-target="#exampleModal">
+  View Trainees
 </button>
 
-<button type="button" class="btn btn-primary" id="allModules" type="submit">
-  View Modules
+<button type="button" class="specificUser" type="submit" data-toggle="modal" data-target="#exampleModal">
+  View/Edit Profile
 </button>
 
-<button type="button" class="btn btn-primary" id="allTasks" type="submit">
-  View Tasks
-</button>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Module</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Id</th>
+              <th scope="col">Name</th>
+              <th scope="col">Duration</th>
+              <th scope="col">Tasks(ID)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{{id}}</th>
+              <td>{{ name }}</td>
+              <td>{{ duration }}</td>
+              <td>{{ tasksId }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-<button type="button" class="btn btn-primary" id="allLogs" type="submit">
-  View Logs
-</button>
+<form id="sendModule" action='/'>
+  <input id="traineeId" type="text" name="traineeId">Trainee id:</input>
+  <input id="moduleId" type="text" name="moduleId">Module id:</input>
+  <input type="submit" name='submit' value="Send module">
+</form>
 
-<button type="button" class="btn btn-primary" id="allStatus" type="submit">
-  View Status
-</button>
 
-<div id="merror"></div>
-
-<br><br><br>
-
-<li>View specific user:</li>
-<input type="text" size="40" placeholder="User id" id="userId"><br />
-<input type="button" value="Submit" id="submitUser">
-
-<li> Delete user by id</li><br>User id:
-<input id="userId1" type="text" name="userId">
-<input type="submit" name="Delete" id="deleteUser" value="Delete User">
 
 <div class="container">
   <div class="row">

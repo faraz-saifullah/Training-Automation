@@ -48,9 +48,14 @@
     "pg": "^7.9.0",
     "pug": "^2.0.3",
     "request": "^2.88.0",
+<<<<<<< 4224f8f0cdf059914d8431de1572fd4b4da82d39
     "sequelize": "^5.2.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"
+=======
+    "sequelize": "^5.2.0",
+    "trello-node-api": "0.0.7"
+>>>>>>> Added admin+trainer dashboard
   }
 }

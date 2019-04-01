@@ -1,73 +1,87 @@
-var createError = require('http-errors');
 var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-const exphbs = require('express-handlebars');
-var session = require('express-session');
-var Sequelize = require('sequelize')
-var SequelizeStore = require('connect-session-sequelize')(session.Store);
-var db = require('./models'),db;
-var models = require('./models');
-var usersRouter = require('./routes/users');
-var indexRouter = require('./routes/index').router;
-
-var app = express();
-
-var sequelize = db.sequelize;
-
-const {
-  PORT = 3000,
-  NODE_ENV = 'development',
-  SESS_NAME = 'sid',
-  
-} = process.env
-
-app.use(session({
-  name: SESS_NAME,
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: false, 
-  cookie: {
-    maxAge: 1000000, 
-    sameSite: true,
-  },
-  store: new SequelizeStore({
-    db: sequelize
-  }),
-  proxy: true
-}));
-
-// view engine setup
-const viewsPath = path.join(__dirname, 'views');
-const layoutsPath = path.join(viewsPath, 'layouts');
-const partialsPath = path.join(viewsPath, 'partials');
-app.set('views', viewsPath);
-
-const exphbsConfig = exphbs.create({
-  defaultLayout: 'main',
-  layoutsDir: layoutsPath,
-  partialsDir: [partialsPath],
-  extname: '.hbs'
+var router = express.Router();
+var User = require('../controller/user')
+var Module = require('../controller/module')
+var Task = require('../controller/task')
+var Log = require('../controller/log')
+var Status = require('../controller/status')
+var role = require('../controller/auth');
+var mail = require('../utils/email');
+var sess;
+/* GET home page. */
+router.get('/', function (req, res, next) {
+  res.redirect('/signin');
 });
 
-app.engine('hbs', exphbsConfig.engine);
-app.set('view engine', '.hbs');
+//users
+router.get('/app/users', User.getUsers);
+router.get('/app/profile', User.profile);
+router.get('/app/specificUser/:id', User.specificUser);
+router.put('/app/users/:id', role.traineeTrainerRole, User.updateUser);
+router.delete('/app/users/:id', role.adminRole, User.deleteUser);
+router.put('/app/users/:id/updateTrainer', role.adminRole, User.updateTrainer);
+router.post('/app/users/:id/taskDone', role.traineeRole, User.taskDone);
+router.post('/app/users/:id/assignModule', role.trainerRole, User.assignModule);
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//modules
+router.get('/app/modules', role.redirectLogin, Module.getModules);
+router.post('/app/modules', role.trainerRole,Module.newModule);
+router.get('/app/modules/:id', role.traineeTrainerRole, Module.specificModule);
+router.put('/app/modules/:id', role.trainerRole, Module.updateModule);
+router.delete('/app/modules/:id', role.trainerRole, Module.deleteModule);
+router.get('/app/modules/:id/tasks', role.traineeTrainerRole, Module.getAllTasks);
+router.post('/app/modules/:id/tasks', role.trainerRole, Module.newTask);
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+//tasks
+router.get('/app/tasks', Task.getTasks);
+router.post('/app/tasks', role.trainerRole, Task.newTask);
+router.get('/app/tasks/:id', role.traineeTrainerRole, Task.specificTask);
+router.put('/app/tasks/:id', role.trainerRole, Task.updateTask);
+router.delete('/app/tasks/:id', role.trainerRole, Task.deleteTask);
 
-// Sync Database
-models.sequelize
-  .sync()
-  .then(function() {
-    console.log('Database Connected');
+//logs
+router.get('/app/logs', Log.getLogs);
+router.post('/app/logs', role.traineeTrainerRole, Log.newLog);
+router.get('/app/logs/:id', role.trainerRole, Log.specificLog);
+//add new router for trainee specific log
+router.delete('/app/logs/:id', role.trainerRole,Log.deleteLog);
+
+//traineeStatus
+router.get('/app/status', role.adminTrainerRole, Status.getStatus);
+router.post('/app/status', role.traineeTrainerRole, Status.newStatus);
+
+router.get('/signup', role.adminRole, (req, res) => {
+  res.render('signup');
 });
 
-module.exports = app;
+router.get('/signin', role.redirectHome, (req, res) => {
+  res.render('signin');
+}); 
+
+router.get('/home', role.redirectLogin, (req, res) => {
+  console.log(req.session);
+  res.render('home');
+});
+
+router.get('/logout', role.redirectLogin, (req, res) => {
+  req.session.destroy(err => {
+    res.redirect('/');
+  });
+});
+
+router.get('/trainerDash', (req, res) => {
+  res.render('trainerDash');
+})
+
+router.post('/signup', function (req, res, next) {
+  User.newUser(req, res)
+});
+
+router.post('/signin', role.redirectHome, function (req, res) {
+  User.login(req, res);
+});
+
+module.exports = {
+  router,
+  sess
+};
