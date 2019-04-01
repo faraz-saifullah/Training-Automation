@@ -9,115 +9,107 @@
       <li class="nav-item">
         <a class="nav-link" href="/logout">Logout</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/app/profile" id="viewUser">Profile</a>
+      </li>
     </ul>
   </div>
 </nav>
+<br><br>
 
-<!-- Button trigger modal -->
-<button type="button" class="specificUser" type="submit" data-toggle="modal" data-target="#exampleModal">
-  View/Edit Profile
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Profile</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email ID</th>
-              <th scope="col">Password</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">{{id}}</th>
-              <td>{{ name }}</td>
-              <td>{{ email }}</td>
-              <td>{{ password }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<button type="button" class="specificUser" type="submit" data-toggle="modal" data-target="#exampleModal">
+<button type="button" class="btn btn-primary" id="allTrainees" type="submit">
   View Trainees
 </button>
 
-<button type="button" class="specificUser" type="submit" data-toggle="modal" data-target="#exampleModal">
-  View/Edit Profile
+<button type="button" class="btn btn-primary" id="allModules" type="submit">
+  View Modules
 </button>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Module</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Id</th>
-              <th scope="col">Name</th>
-              <th scope="col">Duration</th>
-              <th scope="col">Tasks(ID)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">{{id}}</th>
-              <td>{{ name }}</td>
-              <td>{{ duration }}</td>
-              <td>{{ tasksId }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
+<button type="button" class="btn btn-primary" id="allTasks" type="submit">
+  View Tasks
+</button>
 
+<button type="button" class="btn btn-primary" id="allLogs" type="submit">
+  View Logs
+</button>
+
+<button type="button" class="btn btn-primary" id="allStatus" type="submit">
+  View Status
+</button>
+
+<button class="btn btn-primary" id="viewUser1" type="button" data-toggle="collapse" data-target="#collapseExample"
+  aria-expanded="false" aria-controls="collapseExample">
+  Update Profile
+</button>
+
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Id</th>>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Password</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td name="id" id="uu_id"></td>
+          <td contenteditable name="name" id="uu_name"></td>
+          <td contenteditable name="email" id="uu_email"></td>
+          <td contenteditable name="password" id="uu_password"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <button type="button" class="btn btn-primary" id="updateUser" type="submit">
+  Save Changes
+  </button>
+</div>
+<br><br>
+
+<li>View specific module:</li>Module id:
+<input type="text" size="40" id="moduleId">
+<input type="submit" value="Submit" id="submitModule"><br><br>
+
+<li> Update module</li>Module id:
+<input id="moduleId1" type="text" name="moduleId">
+<input type="submit" id="updateModule" value="Update Module"><br><br>
+
+<li> Delete module:</li>Module id:
+<input id="moduleId2" type="text" name="moduleId">
+<input type="submit" id="deleteModule" value="Delete Module"><br><br>
+
+<li> Get all tasks of a module:</li>Module id:
+<input id="moduleId3" type="text" name="moduleId">
+<input type="submit" id="getAllTaskModule" value="Get task Module"><br><br>
+
+<li> Add a task to a module:========yet to add==============</li>Module id: 
+<input id="moduleId3" type="text" name="moduleId">
+<input type="submit" id="getAllTaskModule" value="Get task Module"><br><br>
+
+<li>View specific task:</li>Task id:
+<input type="text" size="40" id="taskId">
+<input type="submit" value="Submit" id="specificTask"><br><br>
+
+<li> Delete Task:</li>Task id:
+<input id="taskId1" type="text" name="taskId">
+<input type="submit" id="deleteTask" value="Delete Task"><br><br>
+
+<li>View specific log:</li>Log id:
+<input type="text" size="40" id="logId">
+<input type="submit" value="Submit" id="specificLog"><br><br>
+
+<li> Delete Log:</li>Log id:
+<input id="logId1" type="text" name="taskId">
+<input type="submit" id="deleteLog" value="Delete Log"><br><br>
+
+Assign Module: (still no api)
 <form id="sendModule" action='/'>
-  <input id="traineeId" type="text" name="traineeId">Trainee id:</input>
-  <input id="moduleId" type="text" name="moduleId">Module id:</input>
+  Trainee id:
+  <input id="traineeId" type="text" name="traineeId">
+  Module id:
+  <input id="moduleId" type="text" name="moduleId">
   <input type="submit" name='submit' value="Send module">
 </form>
-
-
-
-<div class="container">
-  <div class="row">
-    <div class="col-md">
-      <h2>Congratulations!</h2>
-      <h5>You have logged in successfully.</h5>
-      {{!-- <a class="btn btn-primary" href="/logout" role="button">Sign Out</a> --}}
-    </div>
-  </div>
-</div>

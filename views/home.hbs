@@ -15,17 +15,16 @@
     </ul>
   </div>
 </nav>
+<br><br><br>
 
-<br><br>
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" href="/app/profile" id="viewUser" type="submit" data-toggle="modal"
-  data-target="#exampleModal">
-  View/Edit Profile
-</button>
-{{!-- data-toggle="modal" data-target="#exampleModal" --}}
+<form method="GET" action='/app/profile'>
+  <button type="button" id="viewUser" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+    Profile
+  </button>
+</form>
+
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -34,36 +33,39 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email ID</th>
-              <th scope="col">Password</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">{{id}}</th>
-              <td>{{ name }}</td>
-              <td>{{ email }}</td>
-              <td>{{ password }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+      <form id="updateU">
+        <div class="modal-body">
+          Admin:
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Id</th>>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Password</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td name="id" id="u_id"></td>
+                <td contenteditable name="name" id="u_name"></td>
+                <td contenteditable name="email" id="u_email"></td>
+                <td contenteditable name="password" id="u_password"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
     </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" type="submit">Close</button>
+    </div>
+    </form>
   </div>
 </div>
 
-<br><br><br>
 
+
+<br>
 <button type="button" class="btn btn-primary" id="allUsers" type="submit">
   View All Users
 </button>
@@ -84,7 +86,36 @@
   View Status
 </button>
 
-<div id="merror"></div>
+<button class="btn btn-primary" id="viewUser1" type="button" data-toggle="collapse" data-target="#collapseExample"
+  aria-expanded="false" aria-controls="collapseExample">
+  Update Profile
+</button>
+
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Id</th>>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Password</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td name="id" id="uu_id"></td>
+          <td contenteditable name="name" id="uu_name"></td>
+          <td contenteditable name="email" id="uu_email"></td>
+          <td contenteditable name="password" id="uu_password"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<button type="button" class="btn btn-primary" id="updateUser" type="submit">
+  Save Changes
+</button>
 
 <br><br><br>
 
@@ -92,7 +123,7 @@
 <input type="text" size="40" placeholder="User id" id="userId"><br />
 <input type="button" value="Submit" id="submitUser">
 
-<li> Delete user by id</li><br>User id:
+<li> Delete user:</li><br>User id:
 <input id="userId1" type="text" name="userId">
 <input type="submit" name="Delete" id="deleteUser" value="Delete User">
 
