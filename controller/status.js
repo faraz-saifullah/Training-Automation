@@ -1,18 +1,16 @@
 const status = require(`../models`).traineeStatus;
 
-function getStatus(req, res) {
-	return status
+async function getStatus(req, res) {
+	let status = await  status
 		.findAll()
-		.then((status) => {
-			res.status(200).send(status);
-		})
 		.catch((error) => {
 			res.status(400).send(error);
 		});
+	res.status(200).send(status);
 }
 
-function newStatus(req, res) {
-	status
+async function newStatus(req, res) {
+	let newStatus = await status
 		.build({
 			userId: req.body.userId,
 			moduleId: req.body.moduleId,
@@ -20,8 +18,8 @@ function newStatus(req, res) {
 			status: req.body.status
 		})
 		.save()
-		.then((newStatus) => res.status(201).send(newStatus))
 		.catch((error) => res.status(400).send(error));
+	res.status(201).send(newStatus);
 }
 
 module.exports = {

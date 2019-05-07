@@ -3,98 +3,92 @@ const task = require(`../models`).task;
 const taskValidation = require(`../validations/tasks`);
 const moduleValidation = require(`../validations/module`);
 
-function getModules(req, res) {
-	return mod
+async function getModules(req, res) {
+	let modules = await mod
 		.findAll({
 			attributes: [`id`, `name`, `duration`, `tasksId`]
 		})
-		.then((mods) => {
-			res.status(200).send(mods);
-		})
 		.catch((error) => {
 			res.status(400).send(error);
 		});
+	res.status(200).send(modules);
 }
 
-function newModule(req, res) {
-	taskValidation.taskExists(req.body.tasksId).then((tasks) => {
-		if (tasks != `404`) {
-			mod
-				.build({
-					name: req.body.name,
-					duration: req.body.duration,
-					tasksId: [...new Set(req.body.tasksId)]
-				})
-				.save()
-				.then((newMod) => res.status(201).send(newMod))
-				.catch((error) => res.status(400).send(error));
-		} else {
-			res.status(404).send(`Some Tasks Does Not Eist`);
-		}
-	})
+async function newModule(req, res) {
+	let tasks = await taskValidation
+		.taskExists(req.body.tasksId);
+	if (tasks != `404`) {
+		let newModule = await mod
+			.build({
+				name: req.body.name,
+				duration: req.body.duration,
+				tasksId: [...new Set(req.body.tasksId)]
+			})
+			.save()
+			.catch((error) => res.status(400).send(error));
+		res.status(201).send(newModule)
+	} else {
+		res.status(404).send(`Some Tasks Does Not Eist`);
+	}
 }
 
-function specificModule(req, res) {
-	moduleValidation.moduleExists(req.params.id).then((modules) => {
-			if (modules != `404`) {
-				res.status(200).send(modules);
-			} else {
-				res.status(404).send(`Module Does Not Exist`);
-			}
-		})
+async function specificModule(req, res) {
+	let modules = await moduleValidation
+		.moduleExists(req.params.id)
 		.catch((error) => {
 			res.status(400).send(error);
-		});
+		});	
+	if (modules != `404`) {
+		res.status(200).send(modules);
+	} else {
+		res.status(404).send(`Module Does Not Exist`);
+	}
 }
 
-function updateModule(req, res) {
+async function updateModule(req, res) {
 	let arr = [];
 	typeof req.body.tasksId == `object` ? arr = req.body.tasksId : arr.push(req.body.tasksId);
-	taskValidation.taskExists(req.body.tasksId).then((tasks) => {
-		if (tasks != `404`) {
-			return mod
-				.findByPk(req.params.id)
-				.then((modid) => {
-					if (modid) {
-						modid
-							.update({
-								name: req.body.name || modid.name,
-								duration: req.body.duration || modid.duration,
-								tasksId: arr || modid.tasksId
-							})
-							.then(() => {
-								res.status(200).send(modid);
-							})
-							.catch((error) => {
-								res.status(400).send(error);
-							});
-					} else {
-						res.status(404).send(`Module Does Not Exist`);
-					}
+	let tasks = await taskValidation
+		.taskExists(req.body.tasksId);
+	if (tasks != `404`) {
+		let moduleId = await  mod
+			.findByPk(req.params.id);
+		if (moduleId) {
+			moduleId
+				.update({
+					name: req.body.name || moduleId.name,
+					duration: req.body.duration || moduleId.duration,
+					tasksId: arr || moduleId.tasksId
 				})
+				.then(() => {
+					res.status(200).send(moduleId);
+				})
+				.catch((error) => {
+					res.status(400).send(error);
+				});
 		} else {
-			res.status(404).send(`Some Tasks Does Not Eist`);
+			res.status(404).send(`Module Does Not Exist`);
 		}
-	})
+	} else {
+		res.status(404).send(`Some Tasks Does Not Eist`);
+	}
 }
 
-function deleteModule(req, res) {
-	return mod
+async function deleteModule(req, res) {
+	let moduleId = await mod
 		.findByPk(req.params.id)
-		.then(modid => {
-			if (!modid) {
-				return res.status(400).send(`Module Does Not Exist`);
-			}
-			return modid
-				.destroy()
-				.then(() => res.status(204).send())
-				.catch((error) => res.status(400).send(error));
-		})
 		.catch((error) => res.status(400).send(error));
+	if (!moduleId) {
+		return res.status(400).send(`Module Does Not Exist`);
+	}
+	await momoduleIddid
+		.destroy()
+		.catch((error) => res.status(400).send(error));
+	res.status(204).send();
 }
 
-function getAllTasks(req, res) {
-	return mod
+async function getAllTasks(req, res) {
+	let modules = await mod
 		.findAll({
 			raw: true,
 			where: {
@@ -102,18 +96,16 @@ function getAllTasks(req, res) {
 			},
 			attributes: [`tasksId`],
 		})
-		.then((mods) => {
-			if (mods.length > 0) {
-				for (let i = 0; i < mods[0].tasksId.length; i++) {
-					getTask(mods[0].tasksId[i], res, i, mods[0].tasksId.length);
-				}
-			} else {
-				res.status(404).send(`Module Dose Not Exist`);
-			}
-		})
 		.catch((error) => {
 			res.status(400).send(error);
 		});
+	if (modules.length > 0) {
+		for (let i = 0; i < modules[0].tasksId.length; i++) {
+			getTask(modules[0].tasksId[i], res, i, modules[0].tasksId.length);
+		}
+	} else {
+		res.status(404).send(`Module Dose Not Exist`);
+	}
 }
 
 function getTask(id, res, index, length) {
@@ -136,26 +128,22 @@ function getTask(id, res, index, length) {
 		});
 }
 
-function createNewTask(req, res, arr) {
-	return mod
+async function createNewTask(req, res, arr) {
+	let moduleId = await  mod
 		.findByPk(req.params.id)
-		.then((modid) => {
-			return modid
-				.update({
-					tasksId: [...new Set(arr)] || modid.tasksId
-				})
-				.then(() => {
-					res.status(200).send(modid);
-				})
-				.catch((error) => {
-					res.status(400).send(modid);
-				});
+	await moduleId
+		.update({
+			tasksId: [...new Set(arr)] || moduleId.tasksId
 		})
+		.catch((error) => {
+			res.status(400).send(error);
+		});
+	res.status(200).send(moduleId);
 
 }
 
-function newTask(req, res) {
-	return mod
+async function newTask(req, res) {
+	let modules = await mod
 		.findAll({
 			raw: true,
 			where: {
@@ -163,26 +151,24 @@ function newTask(req, res) {
 			},
 			attributes: [`tasksId`],
 		})
-		.then((mods) => {
-			taskValidation.taskExists(req.body.tasksId).then((tasks) => {
-				if (tasks != `404`) {
-					let arr = mods[0].tasksId;
-					if (typeof(req.body.tasksId) == `object`) {
-						for (let i = 0; i < req.body.tasksId.length; i++) {
-							arr.push(Number(req.body.tasksId[i]));
-						}
-					} else {
-						arr.push(Number(req.body.tasksId));
-					}
-					createNewTask(req, res, arr);
-				} else {
-					res.status(404).send(`Some Tasks Does Not Exist`);
-				}
-			})
-		})
 		.catch((error) => {
 			res.status(400).send(error);
 		});
+	let tasks = await taskValidation
+		.taskExists(req.body.tasksId);
+	if (tasks != `404`) {
+		let arr = modules[0].tasksId;
+		if (typeof(req.body.tasksId) == `object`) {
+			for (let i = 0; i < req.body.tasksId.length; i++) {
+				arr.push(Number(req.body.tasksId[i]));
+			}
+		} else {
+			arr.push(Number(req.body.tasksId));
+		}
+		createNewTask(req, res, arr);
+	} else {
+		res.status(404).send(`Some Tasks Does Not Exist`);
+	}
 }
 
 module.exports = {

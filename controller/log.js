@@ -1,18 +1,16 @@
 const log = require(`../models`).log;
 
-function getLogs(req, res) {
-	return log
+async function getLogs(req, res) {
+	let logs = await log
 		.findAll()
-		.then((logs) => {
-			res.status(200).send(logs);
-		})
 		.catch((error) => {
 			res.status(400).send(error);
 		});
+	res.status(200).send(logs);
 }
 
-function newLog(req, res) {
-	log
+async function newLog(req, res) {
+	let newLog = await log
 		.build({
 			entity: req.body.entity,
 			status: req.body.status,
@@ -22,36 +20,32 @@ function newLog(req, res) {
 			taskId: req.body.taskId
 		})
 		.save()
-		.then((newLog) => res.status(201).send(newLog))
 		.catch((error) => res.status(400).send(error));
+	res.status(201).send(newLog);
 }
 
-function specificLog(req, res) {
-	return log
+async function specificLog(req, res) {
+	let log = await  log
 		.findByPk(req.params.id)
-		.then((log) => {
-			res.status(200).send(log);
-		})
 		.catch((error) => {
 			res.status(400).send(error);
 		});
+	res.status(200).send(log);
 }
 
-function deleteLog(req, res) {
-	return log
+async function deleteLog(req, res) {
+	let logId = await log
 		.findByPk(req.params.id)
-		.then(logid => {
-			if (!logid) {
-				return res.status(400).send({
-					message: `Log Not Found`,
-				});
-			}
-			return logid
-				.destroy()
-				.then(() => res.status(204).send())
-				.catch((error) => res.status(400).send(error));
-		})
 		.catch((error) => res.status(400).send(error));
+	if (!logId) {
+		return res.status(400).send({
+			message: `Log Not Found`,
+		});
+	}
+	await logId
+		.destroy()
+		.catch((error) => res.status(400).send(error));
+	res.status(204).send();
 }
 
 module.exports = {

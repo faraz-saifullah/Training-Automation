@@ -53,14 +53,14 @@ async function trainerExists(id) {
 }
 
 async function traineeExists(id) {
-	let users = await user.findAll({
+	let users = await user.findOne({
 		where: {
 			id: id,
 			type: `trainee`
 		},
-		attributes: [`id`, `trainerId`]
+		attributes: [`id`, `trainerId`, `email`, `joinDate`, 'trainingDuration']
 	})
-	return typeof users !== `undefined` && users.length > 0 ? users : `404`;
+	return typeof users !== `undefined` ? users : `404`;
 }
 
 module.exports = {
