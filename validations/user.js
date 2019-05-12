@@ -58,7 +58,7 @@ async function traineeExists(id) {
 			id: id,
 			type: `trainee`
 		},
-		attributes: [`id`, `trainerId`, `email`, `joinDate`, 'trainingDuration']
+		attributes: [`id`, `name`, `trainerId`, `email`, `joinDate`, 'trainingDuration']
 	})
 	return typeof users !== `undefined` ? users : `404`;
 }

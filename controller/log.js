@@ -25,7 +25,7 @@ async function newLog(req, res) {
 }
 
 async function specificLog(req, res) {
-	let log = await  log
+	let log = await log
 		.findByPk(req.params.id)
 		.catch((error) => {
 			res.status(400).send(error);

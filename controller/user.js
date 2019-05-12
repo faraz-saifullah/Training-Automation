@@ -14,7 +14,7 @@ async function getUsers(req, res) {
 		.findAll({
 			attributes: [`id`, `name`, `email`, `password`, `type`, `trainerId`, `joinDate`, `trainingDuration`]
 		})
-	if(users) {
+	if (users) {
 		res.status(200).send(users);
 	} else {
 		res.status(404).send(`No users found!`);
@@ -38,14 +38,14 @@ async function newUser(req, res) {
 				type: req.body.type
 			})
 			.save()
-			let HelperOptions = {
-				from: `Deqode <saifullahf2608@gmail.com>`,
-				to: newUser.email,
-				subject: `Welcome to Deqode!`,
-				text: `Email id: ${newUser.email} Password:` + newUser.password
-			};
-			mail.sendMail(HelperOptions);
-			res.render(`home`)
+		let HelperOptions = {
+			from: `Deqode <saifullahf2608@gmail.com>`,
+			to: newUser.email,
+			subject: `Welcome to Deqode!`,
+			text: `Email id: ${newUser.email} Password:` + newUser.password
+		};
+		mail.sendMail(HelperOptions);
+		res.render(`home`)
 			.catch((error) => res.status(400).send(error));
 	}
 }
@@ -53,11 +53,11 @@ async function newUser(req, res) {
 async function login(req, res) {
 	let existingUser = await user
 		.findOne({
-				where: {
-					email: req.body.email,
-					password: req.body.password
-				}
-			})
+			where: {
+				email: req.body.email,
+				password: req.body.password
+			}
+		})
 	if (!existingUser) {
 		res.status(400).send(`Invalid Credentials`);
 	} else {
@@ -78,11 +78,11 @@ async function profile(req, res) {
 async function login(req, res) {
 	let usr = await user
 		.findOne({
-				where: {
-					email: req.body.email,
-					password: req.body.password
-				}
-			})
+			where: {
+				email: req.body.email,
+				password: req.body.password
+			}
+		})
 	if (!usr) {
 		res.status(400).send(`Invalid Credentials`);
 	} else {
@@ -234,7 +234,6 @@ async function assignModule(req, res) {
 						tasks.tasksId = tasks.tasksId.splice(i);
 						i--;
 					}
-					//duplicate task entry for a user in logs must be handled
 				}
 				log
 					.build({
@@ -313,15 +312,15 @@ async function taskDone(req, res) {
 						}
 					})
 				await log
-				.build({
-					entity: `module`,
-					status: `done`,
-					time: sequelize.fn(`NOW`),
-					userId: req.params.id,
-					moduleId: currentModule.moduleId,
-					trainerId: trainee.trainerId
-				})
-				.save()
+					.build({
+						entity: `module`,
+						status: `done`,
+						time: sequelize.fn(`NOW`),
+						userId: req.params.id,
+						moduleId: currentModule.moduleId,
+						trainerId: trainee.trainerId
+					})
+					.save()
 				let trainerEmail = await user
 					.findOne({
 						raw: true,
@@ -330,14 +329,14 @@ async function taskDone(req, res) {
 						},
 						attributes: [`email`]
 					})
-				let startTime  = await log.findOne({
+				let startTime = await log.findOne({
 					raw: true,
 					where: {
 						userId: req.params.id,
 						moduleId: currentModule.moduleId,
 						status: `done`
 					},
-					attributes : [`time`]
+					attributes: [`time`]
 				})
 				let endTime = await log.findOne({
 					raw: true,
@@ -346,16 +345,27 @@ async function taskDone(req, res) {
 						moduleId: currentModule.moduleId,
 						status: `assigned`
 					},
-					attributes : [`time`]
+					attributes: [`time`]
 				});
-				// console.log(`===========${startTime[0]}==${endTime[0]}============`);
-				// let HelperOptions = {
-				// 	from: `Deqode <saifullahf2608@gmail.com>`,
-				// 	to: trainerEmail,
-				// 	subject: `${trainee.name} Completed Module Number : ${currentModule.moduleId}`,
-				// 	text: `${trainee.name} finished module : ${currentModule.moduleId} in days.`
-				// };
-				// mail.sendMail(HelperOptions);
+				let moduleInfo = await mod
+					.findOne({
+						raw: true,
+						where: {
+							id: currentModule.moduleId
+						},
+						attributes: ['name', 'duration', 'tasksId']
+					})
+				let HelperOptions = {
+					from: `Deqode <saifullahf2608@gmail.com>`,
+					to: trainerEmail.email,
+					subject: `${trainee.name} Completed ${moduleInfo.name} Module Completion Report`,
+					text: `${trainee.name} finished module : ${moduleInfo.name}
+							Assigned on ${startTime.time}
+							Completed om ${endTime.time}
+							Expected duration ${moduleInfo.duration} days
+							Tasks Completed are : ${moduleInfo.tasksId}`
+				};
+				mail.sendMail(HelperOptions);
 				currentModule
 					.update({
 						status: `done`
@@ -377,7 +387,7 @@ async function taskDone(req, res) {
 						where: {
 							id: unfinishedTask.taskId
 						}
-					})
+					});
 				let HelperOptions = {
 					from: `Deqode <saifullahf2608@gmail.com>`,
 					to: trainee.email,
@@ -389,7 +399,7 @@ async function taskDone(req, res) {
 				};
 				mail.sendMail(HelperOptions);
 			}
-				res.status(200).send(`Success`);
+			res.status(200).send(`Success`);
 		} else {
 			res.status(404).send(`Task Not Present`);
 		}
@@ -409,5 +419,5 @@ module.exports = {
 	getRole,
 	login,
 	assignModule,
-	taskDone,
+	taskDone
 };

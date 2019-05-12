@@ -1,7 +1,7 @@
 const status = require(`../models`).traineeStatus;
 
 async function getStatus(req, res) {
-	let status = await  status
+	let status = await status
 		.findAll()
 		.catch((error) => {
 			res.status(400).send(error);

@@ -37,7 +37,7 @@ async function specificModule(req, res) {
 		.moduleExists(req.params.id)
 		.catch((error) => {
 			res.status(400).send(error);
-		});	
+		});
 	if (modules != `404`) {
 		res.status(200).send(modules);
 	} else {
@@ -51,7 +51,7 @@ async function updateModule(req, res) {
 	let tasks = await taskValidation
 		.taskExists(req.body.tasksId);
 	if (tasks != `404`) {
-		let moduleId = await  mod
+		let moduleId = await mod
 			.findByPk(req.params.id);
 		if (moduleId) {
 			moduleId
@@ -129,7 +129,7 @@ function getTask(id, res, index, length) {
 }
 
 async function createNewTask(req, res, arr) {
-	let moduleId = await  mod
+	let moduleId = await mod
 		.findByPk(req.params.id)
 	await moduleId
 		.update({

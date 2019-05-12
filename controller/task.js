@@ -2,7 +2,7 @@ const task = require(`../models`).task;
 const taskValidation = require(`../validations/tasks`);
 
 async function getTasks(req, res) {
-	let tasks = await  task
+	let tasks = await task
 		.findAll({
 			attributes: [`id`, `name`, `description`, `duration`]
 		})
