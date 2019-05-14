@@ -6,12 +6,14 @@ const Task = require(`../controller/task`)
 const Log = require(`../controller/log`)
 const Status = require(`../controller/status`)
 const role = require(`../controller/auth`);
+const trello = require('../utils/trello');
 
 router.get(`/`, function (req, res, next) {
   res.redirect(`/signin`);
 });
 
 //users
+router.get(`/app/trello`, trello.createBoard);
 router.get(`/app/users`, User.getUsers);
 router.get(`/app/profile`, User.profile);
 router.get(`/app/users/:id`, User.specificUser);

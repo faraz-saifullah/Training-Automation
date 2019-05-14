@@ -1,13 +1,14 @@
 const user = require(`../models`).user;
-const sequelize = require(`sequelize`);
 const mod = require(`../models`).module;
 const log = require(`../models`).log;
 const task = require(`../models`).task;
-const mail = require(`../utils/email`);
 const traineeStatus = require(`../models`).traineeStatus;
 const userValidate = require(`../validations/user`);
 const moduleValidate = require(`../validations/module`);
 const taskValidate = require(`../validations/tasks`);
+const trello = require(`../utils/trello`);
+const sequelize = require(`sequelize`);
+const mail = require(`../utils/email`);
 
 async function getUsers(req, res) {
 	let users = await user
@@ -30,23 +31,26 @@ async function newUser(req, res) {
 	} else if (email == `405`) {
 		res.status(405).send(`Invalid Email`);
 	} else if (status != `409`) {
+		let boardDetails = await trello.createBoard(req.body.email, req.body.name);
 		let newUser = await user
 			.build({
 				name: req.body.name,
 				email: req.body.email,
 				password: req.body.password,
-				type: req.body.type
+				type: req.body.type,
+				trelloId: req.body.trelloId,
+				trelloBoardId: boardDetails.id
 			})
 			.save()
+			.catch((error) => res.status(400).send(error));
 		let HelperOptions = {
 			from: `Deqode <saifullahf2608@gmail.com>`,
 			to: newUser.email,
 			subject: `Welcome to Deqode!`,
-			text: `Email id: ${newUser.email} Password:` + newUser.password
+			text: `Email id: ${newUser.email}\nPassword: ${newUser.password}\nTrello Board Link: ${boardDetails.url}`
 		};
 		mail.sendMail(HelperOptions);
 		res.render(`home`)
-			.catch((error) => res.status(400).send(error));
 	}
 }
 
@@ -73,24 +77,6 @@ async function profile(req, res) {
 	let usr = await user
 		.findByPk(req.session.userId)
 	res.status(200).send(usr);
-}
-
-async function login(req, res) {
-	let usr = await user
-		.findOne({
-			where: {
-				email: req.body.email,
-				password: req.body.password
-			}
-		})
-	if (!usr) {
-		res.status(400).send(`Invalid Credentials`);
-	} else {
-		req.session.type = usr.type;
-		req.session.userId = usr.id;
-		console.log(req.session);
-		res.redirect(`home`);
-	}
 }
 
 async function specificUser(req, res) {
@@ -359,11 +345,7 @@ async function taskDone(req, res) {
 					from: `Deqode <saifullahf2608@gmail.com>`,
 					to: trainerEmail.email,
 					subject: `${trainee.name} Completed ${moduleInfo.name} Module Completion Report`,
-					text: `${trainee.name} finished module : ${moduleInfo.name}
-							Assigned on ${startTime.time}
-							Completed om ${endTime.time}
-							Expected duration ${moduleInfo.duration} days
-							Tasks Completed are : ${moduleInfo.tasksId}`
+					text: `${trainee.name} finished module : ${moduleInfo.name}\nAssigned on ${startTime.time}\nCompleted om ${endTime.time}\nExpected duration ${moduleInfo.duration} days\nTasks Completed are : ${moduleInfo.tasksId}`
 				};
 				mail.sendMail(HelperOptions);
 				currentModule
@@ -392,10 +374,7 @@ async function taskDone(req, res) {
 					from: `Deqode <saifullahf2608@gmail.com>`,
 					to: trainee.email,
 					subject: `New Task Assigned`,
-					text: `You have been assigned a new task
-							Name: ${taskInfo.name}
-							Description:${taskInfo.description}
-							Duration:${taskInfo.duration}`
+					text: `You have been assigned a new task\nName: ${taskInfo.name}\nDescription:${taskInfo.description}\nDuration:${taskInfo.duration}`
 				};
 				mail.sendMail(HelperOptions);
 			}
@@ -419,5 +398,5 @@ module.exports = {
 	getRole,
 	login,
 	assignModule,
-	taskDone
+	taskDone,
 };
