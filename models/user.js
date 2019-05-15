@@ -7,7 +7,9 @@ module.exports = (sequelize, DataTypes) => {
 		type: DataTypes.STRING,
 		trainerId: DataTypes.INTEGER,
 		joinDate: DataTypes.DATE,
-		trainingDuration: DataTypes.INTEGER
+		trainingDuration: DataTypes.INTEGER,
+		trelloId: DataTypes.STRING,
+		trelloBoardId: DataTypes.STRING
 	}, {});
 	user.associate = function(models) {
 		user.belongsToMany(models.module, {
