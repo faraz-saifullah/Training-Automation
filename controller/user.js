@@ -31,14 +31,16 @@ async function newUser(req, res) {
 	} else if (email == `405`) {
 		res.status(405).send(`Invalid Email`);
 	} else if (status != `409`) {
-		let boardDetails = await trello.createBoard(req.body.email, req.body.name);
+		let boardDetails = ``;
+		if(req.body.type == `trainee`) {
+			boardDetails = await trello.createBoard(req.body.email, req.body.name);
+		}
 		let newUser = await user
 			.build({
 				name: req.body.name,
 				email: req.body.email,
 				password: req.body.password,
 				type: req.body.type,
-				trelloId: req.body.trelloId,
 				trelloBoardId: boardDetails.id
 			})
 			.save()
@@ -50,7 +52,7 @@ async function newUser(req, res) {
 			text: `Email id: ${newUser.email}\nPassword: ${newUser.password}\nTrello Board Link: ${boardDetails.url}`
 		};
 		mail.sendMail(HelperOptions);
-		res.render(`home`)
+		res.render(`home`);
 	}
 }
 
@@ -107,12 +109,10 @@ async function updateUser(req, res) {
 							email: req.body.email || userId.email,
 							password: req.body.password || userId.password
 						})
-						.then(() => {
-							res.status(200).send(userId);
-						})
 						.catch((error) => {
 							res.status(400).send(error);
 						});
+					res.status(200).send(userId);
 				}
 			} else {
 				res.status(409).send(`Email Already Exists`);
@@ -126,26 +126,26 @@ async function updateUser(req, res) {
 }
 
 async function updateTrainer(req, res) {
-	let userId = await user
-		.findOne({
-			where: {
-				id: req.params.id,
-				type: `trainee`
-			}
-		})
-	console.log(userId);
-	if (!userId) {
-		return res.status(400).send(`Trainee Does Not Exist`);
-	}
-	let user = await userValidate.trainerExists(req.body.trainerId)
-	if (user != `404`) {
-		userId
-			.update({
-				trainerId: req.body.trainerId || userId.trainerId
-			})
-		res.status(200).send(userId);
+	let trainee = await userValidate.traineeExists(req.params.id);
+	if (!trainee) {
+		res.status(400).send(`Trainee Does Not Exist`);
 	} else {
-		res.status(400).send(`Trainer Does Not Exist`);
+		// let existingTrainer = await userValidate.trainerExists(trainee.trainerId);
+		//the below commented part is an ongoing issue in trello api
+		// if(existingTrainer != `404`) {
+		// 	trello.deleteTrainer(trainee.trelloBoardId, existingTrainer.email);
+		// }
+		let trainer = await userValidate.trainerExists(req.body.trainerId);
+		if (trainer != `404`) {
+			trello.addTtrainer(trainee.trelloBoardId, trainer.email, trainer.name);
+			trainee
+				.update({
+					trainerId: req.body.trainerId || trainee.trainerId
+				})
+			res.status(200).send(trainee);
+		} else {
+			res.status(400).send(`Trainer Does Not Exist`);
+		}
 	}
 }
 
@@ -190,34 +190,34 @@ async function assignModule(req, res) {
 						status: `assigned`
 					})
 					.save();
-				let tasks = await mod
-					.findOne({
-						raw: true,
-						where: {
-							id: req.body.moduleId
-						},
-						attributes: [`tasksId`, `name`]
-					})
+				// let tasks = await mod
+				// 	.findOne({
+				// 		raw: true,
+				// 		where: {
+				// 			id: req.body.moduleId
+				// 		},
+				// 		attributes: [`tasksId`, `name`]
+				// 	})
 				let HelperOptions = {
 					from: `Deqode <saifullahf2608@gmail.com>`,
 					to: trainee.email,
 					subject: `New Module Assigned`,
-					text: `You have been assigned a new module : ${tasks.name}`
+					text: `You have been assigned a new module : ${module.name}`
 				};
 				mail.sendMail(HelperOptions);
-				for (let i = 0; i < tasks.tasksId.length; i++) {
+				for (let i = 0; i < module.tasksId.length; i++) {
 					let duplicateTask = await taskValidate
-						.notAlreadyAssigned(req.params.id, tasks.tasksId[i])
+						.notAlreadyAssigned(req.params.id, module.tasksId[i])
 					if (duplicateTask != `409`) {
 						traineeStatus
 							.build({
 								userId: req.params.id,
-								taskId: tasks.tasksId[i],
+								taskId: module.tasksId[i],
 								status: `assigned`
 							})
 							.save()
 					} else {
-						tasks.tasksId = tasks.tasksId.splice(i);
+						module.tasksId = module.tasksId.splice(i);
 						i--;
 					}
 				}
@@ -237,7 +237,7 @@ async function assignModule(req, res) {
 						status: `assigned`,
 						time: sequelize.fn(`NOW`),
 						userId: req.params.id,
-						taskId: tasks.tasksId[0],
+						taskId: module.tasksId[0],
 						trainerId: trainee.trainerId
 					})
 					.save();

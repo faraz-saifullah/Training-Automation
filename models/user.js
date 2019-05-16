@@ -8,7 +8,6 @@ module.exports = (sequelize, DataTypes) => {
 		trainerId: DataTypes.INTEGER,
 		joinDate: DataTypes.DATE,
 		trainingDuration: DataTypes.INTEGER,
-		trelloId: DataTypes.STRING,
 		trelloBoardId: DataTypes.STRING
 	}, {});
 	user.associate = function(models) {

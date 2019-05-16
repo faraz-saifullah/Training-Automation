@@ -42,14 +42,14 @@ async function userExists(id, email) {
 }
 
 async function trainerExists(id) {
-	let users = await user.findAll({
+	let users = await user.findOne({
 		where: {
 			id: id,
 			type: `trainer`
 		},
-		attributes: [`id`, `email`]
+		attributes: [`id`, `email`, `name`]
 	})
-	return typeof users !== `undefined` && users.length > 0 ? users : `404`;
+	return typeof users !== `undefined` ? users : `404`;
 }
 
 async function traineeExists(id) {
@@ -58,7 +58,7 @@ async function traineeExists(id) {
 			id: id,
 			type: `trainee`
 		},
-		attributes: [`id`, `name`, `trainerId`, `email`, `joinDate`, 'trainingDuration']
+		attributes: [`id`, `name`, `trainerId`, `email`, `joinDate`, 'trainingDuration', `trelloBoardId`]
 	})
 	return typeof users !== `undefined` ? users : `404`;
 }
