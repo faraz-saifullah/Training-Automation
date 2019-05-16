@@ -13,7 +13,6 @@ router.get(`/`, function (req, res, next) {
 });
 
 //users
-router.get(`/app/trello`, trello.createCard);
 router.get(`/app/users`, User.getUsers);
 router.get(`/app/profile`, User.profile);
 router.get(`/app/users/:id`, User.specificUser);

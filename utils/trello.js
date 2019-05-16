@@ -110,9 +110,6 @@ async function deleteTrainer(boardId, trainerEmail) {
 }
 
 async function createCard(boardId, cardName, checklistNames) {
-	boardId = `5cdd4388d1c22689abe87f6d`
-	checklistNames = [1,2];
-	cardName = `New Card`;
 	let options = {
 		method: `GET`,
 		url: `https://api.trello.com/1/boards/${boardId}`,
@@ -156,6 +153,7 @@ async function createCard(boardId, cardName, checklistNames) {
 	};
 	let cardDetails = JSON.parse(await request(options));
 	let cardId = cardDetails.id;
+	let cardLink = cardDetails.url;
 	let tasks = await task
 		.findAll({
 			raw: true,
@@ -192,6 +190,7 @@ async function createCard(boardId, cardName, checklistNames) {
 		}
 		request(options);
 	}
+	return cardLink;
 }
 
 module.exports = {

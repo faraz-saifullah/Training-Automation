@@ -190,19 +190,12 @@ async function assignModule(req, res) {
 						status: `assigned`
 					})
 					.save();
-				// let tasks = await mod
-				// 	.findOne({
-				// 		raw: true,
-				// 		where: {
-				// 			id: req.body.moduleId
-				// 		},
-				// 		attributes: [`tasksId`, `name`]
-				// 	})
+				let cardLink = await trello.createCard(trainee.trelloBoardId, module.name, module.tasksId);
 				let HelperOptions = {
 					from: `Deqode <saifullahf2608@gmail.com>`,
 					to: trainee.email,
 					subject: `New Module Assigned`,
-					text: `You have been assigned a new module : ${module.name}`
+					text: `You have been assigned a new module : ${module.name}\nTrello Card Link : ${cardLink}`
 				};
 				mail.sendMail(HelperOptions);
 				for (let i = 0; i < module.tasksId.length; i++) {
