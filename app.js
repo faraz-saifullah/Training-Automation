@@ -10,6 +10,7 @@ var db = require('./models'),db;
 var models = require('./models');
 var usersRouter = require('./routes/users');
 var indexRouter = require('./routes/index');
+var cors = require('cors');
 
 var app = express();
 
@@ -52,6 +53,20 @@ const exphbsConfig = exphbs.create({
 
 app.engine('hbs', exphbsConfig.engine);
 app.set('view engine', '.hbs');
+
+var whitelist = ['http://localhost:3001', 'http://localhost:3000']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+// Then pass them to cors:
+app.use(cors(corsOptions));
 
 app.use(logger('dev'));
 app.use(express.json());

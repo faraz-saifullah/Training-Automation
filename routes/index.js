@@ -6,11 +6,25 @@ const Task = require(`../controller/task`)
 const Log = require(`../controller/log`)
 const Status = require(`../controller/status`)
 const role = require(`../controller/auth`);
-const trello = require('../utils/trello');
+var cors = require('cors');
 
+router.use(cors());
 router.get(`/`, function (req, res, next) {
   res.redirect(`/signin`);
 });
+var whitelist = ['http://localhost:3001', 'http://localhost:3000']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+router.use(cors(corsOptions));
+
 
 //users
 router.get(`/app/users`, User.getUsers);

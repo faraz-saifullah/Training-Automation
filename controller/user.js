@@ -70,7 +70,7 @@ async function login(req, res) {
 		req.session.type = existingUser.type;
 		req.session.userId = existingUser.id;
 		console.log(req.session);
-		res.redirect(`home`);
+		res.send(existingUser);
 	}
 }
 
