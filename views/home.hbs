@@ -1,0 +1,138 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Dashboard</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
+    aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="/signup">Create New Trainer/Trainee</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<br><br><br>
+
+<form method="GET" action='/app/profile'>
+  <button type="button" id="viewUser" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+    Profile
+  </button>
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Profile</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="updateU">
+        <div class="modal-body">
+          Admin:
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Id</th>>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Password</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td name="id" id="u_id"></td>
+                <td contenteditable name="name" id="u_name"></td>
+                <td contenteditable name="email" id="u_email"></td>
+                <td contenteditable name="password" id="u_password"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" type="submit">Close</button>
+    </div>
+    </form>
+  </div>
+</div>
+
+
+
+<br>
+<button type="button" class="btn btn-primary" id="allUsers" type="submit">
+  View All Users
+</button>
+
+<button type="button" class="btn btn-primary" id="allModules" type="submit">
+  View Modules
+</button>
+
+<button type="button" class="btn btn-primary" id="allTasks" type="submit">
+  View Tasks
+</button>
+
+<button type="button" class="btn btn-primary" id="allLogs" type="submit">
+  View Logs
+</button>
+
+<button type="button" class="btn btn-primary" id="allStatus" type="submit">
+  View Status
+</button>
+
+<button class="btn btn-primary" id="viewUser1" type="button" data-toggle="collapse" data-target="#collapseExample"
+  aria-expanded="false" aria-controls="collapseExample">
+  Update Profile
+</button>
+
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Id</th>>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Password</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td name="id" id="uu_id"></td>
+          <td contenteditable name="name" id="uu_name"></td>
+          <td contenteditable name="email" id="uu_email"></td>
+          <td contenteditable name="password" id="uu_password"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<button type="button" class="btn btn-primary" id="updateUser" type="submit">
+  Save Changes
+</button>
+
+<br><br><br>
+
+<li>View specific user:</li>
+<input type="text" size="40" placeholder="User id" id="userId"><br />
+<input type="button" value="Submit" id="submitUser">
+
+<li> Delete user:</li><br>User id:
+<input id="userId1" type="text" name="userId">
+<input type="submit" name="Delete" id="deleteUser" value="Delete User">
+
+<div class="container">
+  <div class="row">
+    <div class="col-md">
+      <h2>Congratulations!</h2>
+      <h5>You have logged in successfully.</h5>
+      {{!-- <a class="btn btn-primary" href="/logout" role="button">Sign Out</a> --}}
+    </div>
+  </div>
+</div>
